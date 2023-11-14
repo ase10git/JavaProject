@@ -20,16 +20,17 @@ public class mainGUI extends JFrame {
 		// 메인 화면 환영 문구
 		JLabel titleName = new JLabel("부평 휴게소");
 		JLabel welcome = new JLabel("부평 휴게소에 온 것을 환영합니다!");
-		titleName.setBounds(400, 0, 100, 100);
-		welcome.setBounds(400, 100, 200, 200);
+		titleName.setBounds(0, 0, 100, 100);
+		welcome.setBounds(0, 100, 200, 200);
 		
-		add(titleName);
-		add(welcome);
+		add("Center", titleName);
+		add("Center", welcome);
 		
 		// 매장 이용 방법 선택
-		JPanel takeOutOrEat = new JPanel(new FlowLayout());
+		JPanel takeOutOrEat = new JPanel(null);
 		JButton takeOut = new JButton("테이크아웃");
 		JButton Eat = new JButton("매장식사");
+		
 		takeOutOrEat.setBounds(100, 100, 800, 900);
 		takeOut.setBounds(10, 250, 100, 100);
 		Eat.setBounds(200, 250, 100, 100);
@@ -40,13 +41,21 @@ public class mainGUI extends JFrame {
 		add(takeOutOrEat);
 		takeOutOrEat.setVisible(true);
 		
+		// 매장이용 버튼 액션 추가
 		ActionListener takeEatButtonAction = new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				takeOutOrEat.setVisible(false);
+				
+				// 메뉴 패널 등장
 				MenuGUI menu = new MenuGUI();
-				add(menu);
+				add("Center", menu);
 				menu.setVisible(true);
+				
+				// 바구니 패널 등장
+				BasketGUI basket = new BasketGUI();
+				add("South", basket);
+				basket.setVisible(true);
 			}
 		};
 		
