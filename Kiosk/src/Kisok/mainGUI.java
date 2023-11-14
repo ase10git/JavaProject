@@ -2,6 +2,7 @@ package Kisok;
 
 import java.awt.Color;
 import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
@@ -15,47 +16,49 @@ public class mainGUI extends JFrame {
 	public mainGUI() {
 		super("메인 프레임");
 		setLayout(null);
-		setBounds(100, 100, 500, 700);
-		setVisible(true);
-		setBackground(Color.WHITE);	
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		setResizable(false);
-		addPanels();
-	}
-	
-	public void addPanels() {
-		// 환영 및 이용방법 패널 이름 추가
+		
+		// 메인 화면 환영 문구
 		JLabel titleName = new JLabel("부평 휴게소");
 		JLabel welcome = new JLabel("부평 휴게소에 온 것을 환영합니다!");
-		titleName.setBounds(210, 0, 100, 100);
-		welcome.setBounds(150, 0, 200, 200);
+		titleName.setBounds(400, 0, 100, 100);
+		welcome.setBounds(400, 100, 200, 200);
 		
 		add(titleName);
 		add(welcome);
 		
-		// 새 패널 추가
-		// 버튼 액션 활성화 시 메뉴 패널
-		takeOrEatPanel();
-		
-		MenuGUI menu = new MenuGUI();
-		BasketGUI basket = new BasketGUI();
-		add(menu);
-		//add(basket);
-	}
-	
-	public void takeOrEatPanel() {
-		JPanel takeOutOrEat = new JPanel();
+		// 매장 이용 방법 선택
+		JPanel takeOutOrEat = new JPanel(new FlowLayout());
 		JButton takeOut = new JButton("테이크아웃");
 		JButton Eat = new JButton("매장식사");
-		
+		takeOutOrEat.setBounds(100, 100, 800, 900);
 		takeOut.setBounds(10, 250, 100, 100);
 		Eat.setBounds(200, 250, 100, 100);
 		
-		takeOutOrEat.setBounds(getBounds());
 		takeOutOrEat.add(takeOut);
 		takeOutOrEat.add(Eat);
 		
 		add(takeOutOrEat);
+		takeOutOrEat.setVisible(true);
+		
+		ActionListener takeEatButtonAction = new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				takeOutOrEat.setVisible(false);
+				MenuGUI menu = new MenuGUI();
+				add(menu);
+				menu.setVisible(true);
+			}
+		};
+		
+		takeOut.addActionListener(takeEatButtonAction);
+		Eat.addActionListener(takeEatButtonAction);
+		
+		// 메인 프레임 크기 설정
+		setBounds(100, 100, 800, 900);
+		setVisible(true);
+		setBackground(Color.WHITE);	
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		setResizable(false);
 	}
-	
+
 }
