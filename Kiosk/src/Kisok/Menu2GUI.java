@@ -1,4 +1,4 @@
-package Kisok;
+package Kiosk;
 
 import java.awt.Color;
 
@@ -6,6 +6,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 public class Menu2GUI extends JPanel{
+	private static final long serialVersionUID = 1L;
 	public Menu2GUI() {
 		setLayout(null);
 		
