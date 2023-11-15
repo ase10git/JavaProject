@@ -11,13 +11,14 @@ import javax.swing.JPanel;
 
 public class MenuGUI extends JPanel{
 	private static final long serialVersionUID = 1L;
-	private static int numOfMenu = 4;
+	int numOfMenu = 4;
 	
 	public MenuGUI() {
 		// 패널 설정
 		setLayout(null);
-		setBounds(0, 0, 800, 700);
-		setBackground(Color.WHITE);	
+		setBounds(0, 100, mainGUI.frameWidth, 550);
+		setBackground(Color.WHITE);
+		setVisible(true);
 		
 		// 메뉴 버튼 추가
 		JButton[] menubt = new JButton[numOfMenu];
