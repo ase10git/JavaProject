@@ -1,7 +1,9 @@
 package Kiosk;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -12,6 +14,8 @@ import javax.swing.JPanel;
 
 public class mainGUI extends JFrame {
 	private static final long serialVersionUID = 1L;
+	private static final int frameWidth = 800;
+	private static final int frameHeight = 900;
 	
 	// 메인 프레임 생성
 	public mainGUI() {
@@ -19,25 +23,42 @@ public class mainGUI extends JFrame {
 		setLayout(null);
 		
 		// 메인 화면 환영 문구
-		JLabel titleName = new JLabel("부평 휴게소");
-		JLabel welcome = new JLabel("부평 휴게소에 온 것을 환영합니다!");
-		titleName.setBounds(0, 0, 100, 100);
-		welcome.setBounds(0, 100, 200, 200);
+		JPanel mainTitle = new JPanel(new BorderLayout());
+		mainTitle.setBounds(0, 0, 800, 100);
+		mainTitle.setBackground(Color.PINK);
 		
-		add("Center", titleName);
-		add("Center", welcome);
+		JLabel titleName = new JLabel("<html><body style='text-align: center'>부평 휴게소<br>부평 휴게소에 온 것을 환영합니다!</html>");
+		titleName.setSize(200, 100);
+		titleName.setFont(new Font("", Font.PLAIN, 18));
+		titleName.setHorizontalAlignment(JLabel.CENTER);
+		titleName.setHorizontalTextPosition(JLabel.CENTER);
+		
+		mainTitle.add("Center", titleName);
+		add(mainTitle);
 		
 		// 매장 이용 방법 선택
 		JPanel takeOutOrEat = new JPanel(null);
-		JButton takeOut = new JButton("테이크아웃");
-		JButton Eat = new JButton("매장식사");
+		JLabel info = new JLabel("매장 이용 방법을 선택해주세요.");
+		JButton takeOut = new JButton("포장");	
+		JButton eat = new JButton("매장에서 식사");
 		
-		takeOutOrEat.setBounds(100, 100, 800, 900);
-		takeOut.setBounds(10, 250, 100, 100);
-		Eat.setBounds(200, 250, 100, 100);
+		// 버튼 크기 설정 및 안내 문구 추가
+		takeOut.setFont(new Font("", Font.PLAIN, 18));
+		eat.setFont(new Font("", Font.PLAIN, 18));
+		info.setFont(new Font("", Font.PLAIN, 18));
 		
+		takeOutOrEat.setBounds(0, 100, 800, 800);
+		//int takeOutOrEatWidth = (int)takeOutOrEat.getSize().getWidth();
+		takeOut.setBounds(0, 500, frameWidth/2, 300);
+		eat.setBounds(frameWidth/2, 500, frameWidth/2, 300);
+		titleName.setSize(200, 100);
+		
+		info.setHorizontalAlignment(JLabel.CENTER);
+		info.setHorizontalTextPosition(JLabel.CENTER);
+		
+		takeOutOrEat.add(info);
 		takeOutOrEat.add(takeOut);
-		takeOutOrEat.add(Eat);
+		takeOutOrEat.add(eat);
 		
 		add(takeOutOrEat);
 		takeOutOrEat.setVisible(true);
@@ -61,13 +82,14 @@ public class mainGUI extends JFrame {
 		};
 		
 		takeOut.addActionListener(takeEatButtonAction);
-		Eat.addActionListener(takeEatButtonAction);
+		eat.addActionListener(takeEatButtonAction);
 		
 		// 메인 프레임 크기 설정
-		setBounds(100, 100, 800, 900);
+		setBounds(100, 100, frameWidth, frameHeight);
 		setVisible(true);
 		setBackground(Color.WHITE);	
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		setLocationRelativeTo(null);
 		setResizable(false);
 	}
 
