@@ -1,20 +1,11 @@
 package Kiosk;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextArea;
-
-public class BasketGUI extends JPanel{
+//수정으로 인해 더 이상 쓰지 않는 클래스
+public class BasketGUI{
 
 	private static final long serialVersionUID = 1L;
 
-	
+	/*
 	public BasketGUI() {
 		
 		setLayout(null);
@@ -65,4 +56,5 @@ public class BasketGUI extends JPanel{
 		payment.addActionListener(basketButtonAction);
 		back.addActionListener(basketButtonAction);
 	}
+	*/
 }

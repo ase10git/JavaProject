@@ -8,15 +8,15 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-
+// 수정으로 인해 더 이상 쓰지 않는 클래스
 public class MenuGUI extends JPanel{
 	private static final long serialVersionUID = 1L;
 	int numOfMenu = 4;
-	
+	/*
 	public MenuGUI() {
 		// 패널 설정
 		setLayout(null);
-		setBounds(0, 100, mainGUI.frameWidth, 550);
+		setBounds(0, 100, frameWidth, 550);
 		setBackground(Color.WHITE);
 		setVisible(true);
 		
@@ -124,5 +124,5 @@ public class MenuGUI extends JPanel{
 		add(menu4);
 		return menu4;
 	}
-
+*/
 }

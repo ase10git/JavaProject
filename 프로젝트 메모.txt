@@ -26,6 +26,7 @@
 => **완료창**
 
 
-ref : https://azuressu.github.io/first/
+ref1 : https://azuressu.github.io/first/
+ref2 : https://kdjcomputer.tistory.com/100
 
 코드 진행도 자료 작성 (어느 동작을 실행하면 어떻게 작동되는지, 도착 위치, 연계)
