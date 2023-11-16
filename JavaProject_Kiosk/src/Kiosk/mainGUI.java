@@ -62,19 +62,19 @@ public class MainGUI extends JFrame {
 		// 패널 추가
 		addTakeOrEatPanel();
 		addMenuPanel();
-		addCreditPanel();
 		addBasketPanel();
+		addCreditPanel();
 		
 		// 패널 표시
 		takeOutOrEat = getTakeOrEatPanel();
 		menuGUI = getMenuPanel();
-		creditGUI = getCreditPanel();
 		basketGUI = getBasketPanel();
+		creditGUI = getCreditPanel();	
 		
 		takeOutOrEat.setVisible(true);
 		menuGUI.setVisible(false);
-		creditGUI.setVisible(false);
 		basketGUI.setVisible(false);
+		creditGUI.setVisible(false);
 		
 		// 메인 프레임 크기 설정
 		setBounds(100, 100, frameWidth, frameHeight);
@@ -201,7 +201,6 @@ public class MainGUI extends JFrame {
 	public JPanel addMenu1() { // 분식
 		
 		JPanel menu1 = new JPanel(new GridLayout(3, 2));
-
 		menu1.setBounds(0, 100, 800, 700);
 		menu1.setBackground(Color.BLUE);
 		menu1.setVisible(true);
@@ -225,7 +224,6 @@ public class MainGUI extends JFrame {
 	public JPanel addMenu2() { // 일식
 		
 		JPanel menu2 = new JPanel(new GridLayout(3, 2));
-
 		menu2.setBounds(0, 100, 800, 700);
 		menu2.setBackground(Color.YELLOW);	
 		menu2.setVisible(false);
@@ -248,8 +246,7 @@ public class MainGUI extends JFrame {
 	
 	public JPanel addMenu3() { // 한식
 		
-		JPanel menu3 = new JPanel(new GridLayout(3, 2));
-		
+		JPanel menu3 = new JPanel(new GridLayout(3, 2));	
 		menu3.setBounds(0, 100, 800, 700);
 		menu3.setBackground(Color.PINK);
 		menu3.setVisible(false);
@@ -272,8 +269,7 @@ public class MainGUI extends JFrame {
 	
 	public JPanel addMenu4() { // 한식
 		
-		JPanel menu4 = new JPanel(new GridLayout(3, 2));
-		
+		JPanel menu4 = new JPanel(new GridLayout(3, 2));		
 		menu4.setBounds(0, 100, 800, 700);
 		menu4.setBackground(Color.CYAN);
 		menu4.setVisible(false);
@@ -308,8 +304,6 @@ public class MainGUI extends JFrame {
 		basketTitle.setFont(kfont);
 		basketTitle.setBounds(10, 0, 150, 50);
 		basketTitle.setHorizontalTextPosition(JLabel.LEFT);
-			
-		JTextArea chosenMenu = new JTextArea();	
 		
 		JButton payment = new JButton("결제");
 		JButton back = new JButton("처음으로 돌아가기");
@@ -318,6 +312,7 @@ public class MainGUI extends JFrame {
 		back.setFont(kfont);
 		back.setBounds(600, 140, 190, 80);
 		
+		// payment , back에 액션 추가
 		ActionListener basketButtonAction = new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -339,37 +334,33 @@ public class MainGUI extends JFrame {
 				
 		// 가격 텍스트창 객체 불러오기
 		addbastketArea();
-		JTextArea basketText = getBasketText();
-		//basketGUI.add(basketText);
-		//basketText.setVisible(true);
+		JScrollPane basketPane = getBasketPane();
 		
-		// 가격 텍스트창 객체용 ScrollPane 생성
-		int v = ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED;
-		int h = ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER;
-		JScrollPane textScroll = new JScrollPane(basketText, v, h);
-		textScroll.setBounds(10, 50, 580, 150);
-		
-	
+		// 총 합 텍스트
+		JLabel totalPrice = new JLabel();
+		totalPrice.setFont(kfont);
+		totalPrice.setHorizontalTextPosition(JLabel.LEFT);
+
+		String[] disp = {"총 합 : ", "0", "원"};
+		totalPrice.setText(disp[0]+disp[1]+disp[2]);
 		
 		// 객체들을 basketGUI에 추가
 		basketGUI.add(basketTitle);
-		basketGUI.add(chosenMenu);
 		basketGUI.add(payment);
 		basketGUI.add(back);
-		basketGUI.add(textScroll);	
-
+		basketGUI.add(basketPane);
+		basketGUI.add(totalPrice);
+		
 		// 장바구니 객체 추가
 		add(basketGUI);	
 		setBasketPanel(basketGUI);
-
 	} // end addBasketGUI --------------------------------------------------------
 	
 	// 장바구니 메뉴 창 추가 --------------------------------------------------------
 	public void addbastketArea() {
 		
 		basketText = new JTextArea(15, 20);
-		
-		basketText.setVisible(false);
+		basketText.setVisible(true);
 		basketText.setEditable(false);
 		basketText.setFont(kfont);
 		
@@ -391,28 +382,29 @@ public class MainGUI extends JFrame {
 		JScrollPane basketPane = new JScrollPane(basketText, v, h);
 		basketPane.setBounds(10, 50, 580, 150);
 		
-		// basketText 객체를 새로 지정
-		//setBasketText(basketText);
+		// basketText 와 basketPane 객체를 새로 지정
+		setBasketText(basketText);
 		setBasketPane(basketPane);
-	}
+	} // end addbastketArea ===============================================
 	
 	// 결제창 추가(JPanel creditGUI) ===============================================
 	public void addCreditPanel() {
 		
 		creditGUI = new JPanel(null);
-		creditGUI.setBounds(0, 350, frameWidth, frameHeight-350);
+		creditGUI.setBounds(0, 100, frameWidth, frameHeight-100);
 		creditGUI.setVisible(false);
 		creditGUI.setBackground(Color.WHITE);	
 		
+		// 결제방법 안내 추가
 		JLabel paymentMethod = new JLabel("결제 방법을 선택해주세요.");
 		paymentMethod.setFont(kfont);
-		paymentMethod.setBounds(frameWidth/2-150, 0, 300, 50);
+		paymentMethod.setBounds(frameWidth/2-150, 250, 300, 50);
 		paymentMethod.setHorizontalAlignment(JLabel.CENTER);
 		
 		// 뒤로 가기 버튼 추가 => 메뉴 선택으로 돌아감
 		JButton back = new JButton("뒤로 돌아가기");
 		back.setFont(kfont);
-		back.setBounds(600, 440, 190, 80);
+		back.setBounds(600, 690, 190, 80);
 		
 		// 결제방법 버튼 추가 => creditGUI에 추가
 		JButton[] paybt = new JButton[numOfPayment];
@@ -421,10 +413,10 @@ public class MainGUI extends JFrame {
 		paybt[2] = new JButton("페이앱");
 		paybt[3] = new JButton("기프트카드/쿠폰");
 		
-		paybt[0].setBounds(frameWidth/2-300, 80, 250, 150);
-		paybt[1].setBounds(frameWidth/2+50, 80, 250, 150);
-		paybt[2].setBounds(frameWidth/2-300, 280, 250, 150);
-		paybt[3].setBounds(frameWidth/2+50, 280, 250, 150);
+		paybt[0].setBounds(frameWidth/2-300, 330, 250, 150);
+		paybt[1].setBounds(frameWidth/2+50, 330, 250, 150);
+		paybt[2].setBounds(frameWidth/2-300, 530, 250, 150);
+		paybt[3].setBounds(frameWidth/2+50, 530, 250, 150);
 		paybt[0].setFont(kfont);
 		paybt[1].setFont(kfont);
 		paybt[2].setFont(kfont);
@@ -436,7 +428,6 @@ public class MainGUI extends JFrame {
 		creditMethod[1] = addCredit2();
 		creditMethod[2] = addCredit3();
 		creditMethod[3] = addCredit4();
-
 		
 		// 결제 방법 버튼에 액션 추가
 		ActionListener paybtActionListener = new ActionListener() {	
@@ -480,14 +471,22 @@ public class MainGUI extends JFrame {
 			}
 		});
 		
+		// 버튼 설정 및 creditGUI에 버튼 객체 추가
 		for (int i = 0; i < numOfPayment; i++) {
 			paybt[i].addActionListener(paybtActionListener);
 			creditGUI.add(paybt[i]);
 		}
 		
+		JLabel totalPrice = new JLabel();
+		totalPrice.setBounds(frameWidth/2-300/2, 0, 300, 100);
+		totalPrice.setText("결제할 금액 : " + "원");
+		totalPrice.setHorizontalTextPosition(frameHeight);
+		totalPrice.setFont(new Font("", Font.PLAIN, 34));
+		
 		// creditGUI에 객체 추가
 		creditGUI.add(paymentMethod);
 		creditGUI.add(back);
+		creditGUI.add(totalPrice);
 		
 		// 결제창 객체 추가
 		add(creditGUI);
@@ -695,6 +694,12 @@ public class MainGUI extends JFrame {
 	public JScrollPane getBasketPane() {
 		return basketPane;
 	}
+	
 	// end setter getter ======================================================
 	
+	// 데이터 호출하기
+	// 총 가격 가져오기
+	public void getTotalPrice() {
+
+	}// end getTotalPrice =======================================================
 }
