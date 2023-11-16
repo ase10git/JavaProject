@@ -2,25 +2,25 @@ package Kiosk;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.ScrollPaneConstants;
 
 /* 키오스크의 GUI를 생성하는 클래스
  * 메인 화면, 메뉴 화면, 결제화면
  * 
  */
-public class MainGUI extends JFrame{
+public class MainGUI extends JFrame {
 	private static final long serialVersionUID = 1L;
 	static final int frameWidth = 800;
 	static final int frameHeight = 900;
@@ -33,6 +33,8 @@ public class MainGUI extends JFrame{
 	JPanel creditGUI;
 	JPanel basketGUI;
 	JPanel orderEndGUI;
+	JTextArea basketText;
+	JScrollPane basketPane;
 	
 	String payment = "";
 	
@@ -320,6 +322,7 @@ public class MainGUI extends JFrame{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (e.getActionCommand() == "처음으로 돌아가기") {
+					menuGUI.setVisible(false);
 					basketGUI.setVisible(false);
 					creditGUI.setVisible(false);
 					takeOutOrEat.setVisible(true);
@@ -332,17 +335,66 @@ public class MainGUI extends JFrame{
 		};
 		
 		payment.addActionListener(basketButtonAction);
-		back.addActionListener(basketButtonAction);
+		back.addActionListener(basketButtonAction);	
+				
+		// 가격 텍스트창 객체 불러오기
+		addbastketArea();
+		JTextArea basketText = getBasketText();
+		//basketGUI.add(basketText);
+		//basketText.setVisible(true);
 		
+		// 가격 텍스트창 객체용 ScrollPane 생성
+		int v = ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED;
+		int h = ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER;
+		JScrollPane textScroll = new JScrollPane(basketText, v, h);
+		textScroll.setBounds(10, 50, 580, 150);
+		
+	
+		
+		// 객체들을 basketGUI에 추가
 		basketGUI.add(basketTitle);
 		basketGUI.add(chosenMenu);
 		basketGUI.add(payment);
 		basketGUI.add(back);
-		
+		basketGUI.add(textScroll);	
+
 		// 장바구니 객체 추가
-		add(basketGUI);
+		add(basketGUI);	
 		setBasketPanel(basketGUI);
-	} // end addBasketGUI =======================================================
+
+	} // end addBasketGUI --------------------------------------------------------
+	
+	// 장바구니 메뉴 창 추가 --------------------------------------------------------
+	public void addbastketArea() {
+		
+		basketText = new JTextArea(15, 20);
+		
+		basketText.setVisible(false);
+		basketText.setEditable(false);
+		basketText.setFont(kfont);
+		
+		basketText.setText("장바구니 테스트용 에리어 \n");
+		basketText.append("지금까지 고른 메뉴의 이름과 가격을 확인할 수 있습니다. \n");
+		basketText.append("메뉴를 삭제할 수 있습니다. \n");
+		basketText.append("\n");
+		basketText.append("메뉴를 삭제할 수 있습니다.2 \n");
+		basketText.append("장바구니 테스트용 에리어2 \n");
+		basketText.append("지금까지 고른 메뉴의 이름과 가격을 확인할 수 있습니다.2 \n");
+		basketText.append("메뉴를 삭제할 수 있습니다.3 \n");	
+		basketText.append("장바구니 테스트용 에리어3 \n");
+		basketText.append("지금까지 고른 메뉴의 이름과 가격을 확인할 수 있습니다.3 \n");
+		basketText.append("메뉴를 삭제할 수 있습니다.3 \n");
+
+		// 가격 텍스트창 객체용 ScrollPane 생성
+		int v = ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED;
+		int h = ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER;
+		JScrollPane basketPane = new JScrollPane(basketText, v, h);
+		basketPane.setBounds(10, 50, 580, 150);
+		
+		// basketText 객체를 새로 지정
+		//setBasketText(basketText);
+		setBasketPane(basketPane);
+	}
 	
 	// 결제창 추가(JPanel creditGUI) ===============================================
 	public void addCreditPanel() {
@@ -626,6 +678,22 @@ public class MainGUI extends JFrame{
 	
 	public JPanel getOrderEndPanel() {
 		return orderEndGUI;
+	}
+	
+	public void setBasketText(JTextArea basketText) {
+		this.basketText = basketText;
+	}
+	
+	public JTextArea getBasketText() {
+		return basketText;
+	}
+	
+	public void setBasketPane(JScrollPane basketPane) {
+		this.basketPane = basketPane;
+	}
+	
+	public JScrollPane getBasketPane() {
+		return basketPane;
 	}
 	// end setter getter ======================================================
 	
