@@ -8,14 +8,16 @@ import java.awt.TextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
-import javax.swing.text.BadLocationException;
 
 /* 키오스크의 GUI를 생성하는 클래스
  * 메인 화면, 메뉴 화면, 결제화면
@@ -32,16 +34,20 @@ public class MainGUI extends JFrame {
 	int numOfPayment = 4;
 	String imageAddr = "src/Kiosk/Images/";
 	
-	JPanel takeOutOrEat;
-	JPanel menuGUI;
-	JPanel creditGUI;
-	JPanel basketGUI;
-	JPanel orderEndGUI;
-	JTextArea basketText;
+	private JPanel takeOutOrEat;
+	private JPanel menuGUI;
+	private JPanel[] menu;
+	private JPanel creditGUI;
+	private JPanel[] creditMethod;
+	private JPanel basketGUI;
+	private JPanel orderEndGUI;
+	private JList basketList;
+	private DefaultListModel<String> model;
+	private JScrollPane basketPane;
 	
 	String payment = "";
 	
-	// 메인 프레임 생성 =============================================================
+	// 메인 프레임 생성
 	public MainGUI() {
 		
 		super("mainFrame");
@@ -89,7 +95,7 @@ public class MainGUI extends JFrame {
 		
 	} // end mainGUI ============================================================
 	
-	// 매장 이용 방법 선택 (JPanel takeOutOrEat) ========================================
+	// 매장 이용 방법 선택 (JPanel takeOutOrEat)
 	public void addTakeOrEatPanel() {
 		
 		takeOutOrEat = new JPanel(null);
@@ -111,19 +117,7 @@ public class MainGUI extends JFrame {
 		info.setFont(kfont);
 		info.setHorizontalAlignment(JLabel.CENTER);
 		info.setHorizontalTextPosition(JLabel.CENTER);
-		
-		// 매장이용 버튼 액션 추가
-		ActionListener takeEatButtonAction = new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				takeOutOrEat.setVisible(false);			
-				// 메뉴 패널 등장
-				menuGUI.setVisible(true);
-				// 바구니 패널 등장
-				basketGUI.setVisible(true);
-			}
-		};
-		
+
 		// 버튼 설정 및 추가
 		takeOut.addActionListener(takeEatButtonAction);
 		eat.addActionListener(takeEatButtonAction);
@@ -137,7 +131,7 @@ public class MainGUI extends JFrame {
 		setTakeOrEatPanel(takeOutOrEat);
 	} // end add TakeOrEatPanel ===============================================
 	
-	// 메뉴 패널 추가(JPanel menuGUI) ==============================================
+	// 메뉴 패널 추가(JPanel menuGUI)
 	public void addMenuPanel() {
 		
 		menuGUI = new JPanel(null);
@@ -153,35 +147,8 @@ public class MainGUI extends JFrame {
 		}
 		
 		// 메뉴 화면들 추가
-		JPanel[] menu = addMenus();
+		addMenus();
 		
-		// 메뉴 버튼 액션 추가
-		ActionListener menuButtonAction = new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				if(e.getActionCommand() == "분식") {
-					menu[0].setVisible(true);
-					menu[1].setVisible(false);
-					menu[2].setVisible(false);
-					menu[3].setVisible(false);
-				} else if (e.getActionCommand() == "일식") {
-					menu[0].setVisible(false);
-					menu[1].setVisible(true);
-					menu[2].setVisible(false);
-					menu[3].setVisible(false);
-				} else if (e.getActionCommand() == "한식") {	
-					menu[0].setVisible(false);
-					menu[1].setVisible(false);
-					menu[2].setVisible(true);
-					menu[3].setVisible(false);
-				} else if (e.getActionCommand() == "양식") {
-					menu[0].setVisible(false);
-					menu[1].setVisible(false);
-					menu[2].setVisible(false);
-					menu[3].setVisible(true);
-				} 
-			}
-		};
-
 		// 버튼 설정 및 버튼 추가
 		for (int i = 0; i < menubt.length; i++) {
 			menubt[i].setBounds(i*100, 0, 100, 100);
@@ -235,6 +202,8 @@ public class MainGUI extends JFrame {
 				num[j] = new TextField("0");
 				num[j].setBackground(Color.white);
 				num[j].setBounds(bt[j].getX()+40,bt[j].getY()+140,50,20);
+				num[j].setFont(mfont);
+				num[j].setEditable(false);
 				
 				minus[j] = new Button("-");
 				minus[j].setBounds(bt[j].getX()+10,num[j].getY(),20,20);
@@ -258,28 +227,31 @@ public class MainGUI extends JFrame {
 				menu[i].add(num[j]);
 				
 				int menuNum = j;
-				// "+", "-", "확인" 버튼 액션 리스너 @@@@@@@@@@@@@@@@ 수정중
+				// "+", "-", "확인" 버튼 액션 리스너
 				ActionListener plusMinusAction = new ActionListener() {
-					TextField jf = num[menuNum];
-					JLabel name = snackName[menuNum];
-					int nums = Integer.parseInt(jf.getText()); // 중복 메뉴의 수량 추가
-					
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						if (e.getActionCommand() == "+") {
+						TextField jf = num[menuNum];
+						JLabel name = snackName[menuNum];
+						int nums = Integer.parseInt(jf.getText());// 중복 메뉴의 수량 추가
+						StringBuilder sb = new StringBuilder();
+						
+						if (e.getActionCommand() == "+") { // 수량 추가
 							jf.setText(String.valueOf(nums+1));
-						} else if (e.getActionCommand() == "-") {
+						} else if (e.getActionCommand() == "-") { // 수량 감소
 							if (nums>0) {
 								jf.setText(String.valueOf(nums-1));
 							} else jf.setText("0");
-						} else {
-							String prevStr = "원하시는";
-							String prevLine = basketText.getText();
-							if (prevLine.contains(prevStr)) {
-								basketText.setText(name.getText()+" :\t"+jf.getText()+" 개\n");
-							} else {
-								basketText.append(name.getText()+" :\t"+jf.getText()+" 개\n");
+						} else if (e.getActionCommand() == "확인") { // model 에 추가
+							String prevStr = "음식의 수량";
+							
+							if (model.getElementAt(model.getSize()-1).contains(prevStr)) {
+								model.removeAllElements();
 							}
+							sb.append(name.getText()).append(" :\t").append(jf.getText()).append(" 개");
+							model.addElement(sb.toString());
+							jf.setText("0");
+							sb.setLength(0);
 						}
 					}
 				};
@@ -301,7 +273,8 @@ public class MainGUI extends JFrame {
 		
 			menuGUI.add(menu[i]);
 		}
-		// 저장된 메뉴 패널 배열 반환
+		// 저장된 메뉴 패널 배열 반환 및 객체 저장
+		setMenus(menu);
 		return menu;
 	} // end addMenus ========================================================
 
@@ -318,21 +291,9 @@ public class MainGUI extends JFrame {
 		basketTitle.setFont(kfont);
 		basketTitle.setBounds(10, 0, 150, 50);
 		basketTitle.setHorizontalTextPosition(JLabel.LEFT);
-		
-		// 가격 텍스트창 만들기
-		basketText = new JTextArea(15, 20);
-		basketText.setVisible(true);
-		basketText.setEditable(false);
-		basketText.setFont(kfont);
-		
-		basketText.setText("원하시는 음식의 수량을 +(더하기) 버튼으로 추가 후 확인을 눌러주세요.\n");
-		basketText.append("음식의 수량을 줄이려면 -(빼기) 버튼을 눌러주세요.\n");
-		
-		// 가격 텍스트창 객체용 ScrollPane 생성
-		int v = ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED;
-		int h = ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER;
-		JScrollPane basketPane = new JScrollPane(basketText, v, h);
-		basketPane.setBounds(10, 50, 580, 150);
+
+		// 선택한 메뉴 리스트와 스크롤 팬 생성
+		addBasketList();
 		
 		// 총 합 텍스트
 		JLabel totalPrice = new JLabel();
@@ -345,7 +306,7 @@ public class MainGUI extends JFrame {
 		
 		// 버튼 추가
 		JButton[] basketbt = new JButton[4];
-		String[] name = {"결제", "처음으로 돌아가기", "모두 제거", "맨 마지막 제거"};
+		String[] name = {"결제", "처음으로 돌아가기", "모두 제거", "선택한 메뉴 제거"};
 		for (int i = 0; i < basketbt.length; i++) {
 			basketbt[i] = new JButton(name[i]);	
 			basketbt[i].setHorizontalTextPosition(JLabel.CENTER);
@@ -357,36 +318,7 @@ public class MainGUI extends JFrame {
 				basketbt[i].setFont(mfont);
 			}
 		}
-		
-		// payment , back에 액션 추가
-		ActionListener basketButtonAction = new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (e.getActionCommand() == "처음으로 돌아가기") {
-					menuGUI.setVisible(false);
-					basketGUI.setVisible(false);
-					creditGUI.setVisible(false);
-					takeOutOrEat.setVisible(true);
-				} else if (e.getActionCommand() == "결제") {
-					menuGUI.setVisible(false);
-					basketGUI.setVisible(false);
-					creditGUI.setVisible(true);
-				} else if (e.getActionCommand() == "모두 제거") {
-					basketText.removeAll();
-					basketText.setText("원하시는 음식의 수량을 +(더하기) 버튼으로 추가 후 확인을 눌러주세요.\n");
-					basketText.append("음식의 수량을 줄이려면 -(빼기) 버튼을 눌러주세요.\n");
-				} else if (e.getActionCommand() == "맨 마지막 제거") {
-					if (basketText.getLineCount()>1) {
-							// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@버튼 기능 구현중
-					} else {
-						basketText.removeAll();
-						basketText.setText("원하시는 음식의 수량을 +(더하기) 버튼으로 추가 후 확인을 눌러주세요.\n");
-						basketText.append("음식의 수량을 줄이려면 -(빼기) 버튼을 눌러주세요.\n");
-					}
-				}
-			}
-		};
-		
+
 		// 버튼에 액션 추가 및 basketGUI에 추가
 		for (int i = 0; i < basketbt.length; i++) {
 			basketbt[i].addActionListener(basketButtonAction);
@@ -395,15 +327,35 @@ public class MainGUI extends JFrame {
 		
 		// 객체들을 basketGUI에 추가
 		basketGUI.add(basketTitle);
-		basketGUI.add(basketPane);
+		basketGUI.add(getBasketPane());
 		basketGUI.add(totalPrice);
 	
 		// 장바구니 객체 추가
 		add(basketGUI);	
 		setBasketPanel(basketGUI);
-		setBasketText(basketText);
 	} // end addBasketGUI --------------------------------------------------------
 		
+	public void addBasketList() {	
+		model = new DefaultListModel<String>();
+		model.addElement("원하시는 음식의 수량을 +(더하기) 버튼으로 추가 후 확인을 눌러주세요.\n");
+		model.addElement("음식의 수량을 줄이려면 -(빼기) 버튼을 눌러주세요.\n");
+		
+		basketList = new JList<String>(model);
+		basketList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		basketList.setFont(kfont);
+		
+		// 가격 텍스트창 객체용 ScrollPane 생성
+		int v = ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED;
+		int h = ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER;
+		JScrollPane basketPane = new JScrollPane(basketList, v, h);
+		basketPane.setBounds(10, 50, 580, 150);
+		
+		// 객체들 저장
+		setBasketList(basketList);
+		setModel(model);
+		setBasketPane(basketPane);
+	}
+	
 	// 결제창 추가(JPanel creditGUI) ===============================================
 	public void addCreditPanel() {
 		
@@ -438,50 +390,11 @@ public class MainGUI extends JFrame {
 		}
 		
 		// 결제 방법 패널 생성
-		JPanel[] creditMethod = addCreditMethod();
-		
-		// 결제 방법 버튼에 액션 추가
-		ActionListener paybtActionListener = new ActionListener() {	
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				creditGUI.setVisible(false);
-				basketGUI.setVisible(false);
-				if(e.getActionCommand() == "신용/체크/지역화폐 카드") {
-					creditMethod[0].setVisible(true);
-					creditMethod[1].setVisible(false);
-					creditMethod[2].setVisible(false);
-					creditMethod[3].setVisible(false);
-				} else if (e.getActionCommand() == "현금") {
-					creditMethod[0].setVisible(false);
-					creditMethod[1].setVisible(true);
-					creditMethod[2].setVisible(false);
-					creditMethod[3].setVisible(false);
-				} else if (e.getActionCommand() == "페이앱") {	
-					creditMethod[0].setVisible(false);
-					creditMethod[1].setVisible(false);
-					creditMethod[2].setVisible(true);
-					creditMethod[3].setVisible(false);
-				} else if (e.getActionCommand() == "기프트카드/쿠폰") {
-					creditMethod[0].setVisible(false);
-					creditMethod[1].setVisible(false);
-					creditMethod[2].setVisible(false);
-					creditMethod[3].setVisible(true);
-				} 
-			}
-		};
+		addCreditMethod();
 		
 		// 메뉴로 돌아가기 버튼에 액션 추가
-		back.addActionListener(new ActionListener() {		
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (e.getActionCommand() == "뒤로 돌아가기") {
-					basketGUI.setVisible(true);
-					menuGUI.setVisible(true);
-					creditGUI.setVisible(false);
-				}
-			}
-		});
-		
+		back.addActionListener(returnToMenu);
+
 		// 버튼 설정 및 creditGUI에 버튼 객체 추가
 		for (int i = 0; i < numOfPayment; i++) {
 			paybt[i].addActionListener(paybtActionListener);
@@ -521,6 +434,26 @@ public class MainGUI extends JFrame {
 		});
 		return back;
 	}
+	
+	// 결제 방법 별 결제창 생성 ------------------------------------------------------------
+	public JPanel[] addCreditMethod() {
+		JPanel[] creditMethod = new JPanel[numOfPayment];
+		
+		for (int i = 0; i < numOfPayment; i++) {
+			creditMethod[i] = new JPanel(null);
+			creditMethod[i].setBounds(0, 100, frameWidth, frameHeight-100);
+			creditMethod[i].setBackground(Color.LIGHT_GRAY);
+			creditMethod[i].setVisible(false);
+			
+			creditMethod[i].add(backButton(creditMethod[i]));
+			//creditMethod[i].add(paymentConfirm());
+			add(creditMethod[i]);
+		}
+		// 결제 방법 창 객체 저장 및 반환
+		setCreditMethodPanel(creditMethod);
+		return creditMethod;
+	}// end addCreditMethod ===============================================
+	
 	/*
 	// 결제 금액 확인용 창 생성
 	public JPanel paymentConfirm() {
@@ -550,23 +483,6 @@ public class MainGUI extends JFrame {
 	}
 	*/
 	
-	// 결제 방법 별 결제창 생성 ------------------------------------------------------------
-	public JPanel[] addCreditMethod() {
-		JPanel[] creditMethod = new JPanel[numOfPayment];
-		
-		for (int i = 0; i < numOfPayment; i++) {
-			creditMethod[i] = new JPanel(null);
-			creditMethod[i].setBounds(0, 100, frameWidth, frameHeight-100);
-			creditMethod[i].setBackground(Color.LIGHT_GRAY);
-			creditMethod[i].setVisible(false);
-			
-			creditMethod[i].add(backButton(creditMethod[i]));
-			//creditMethod[i].add(paymentConfirm());
-			add(creditMethod[i]);
-		}
-		return creditMethod;
-	}// end addCreditMethod===============================================
-	
 	// 주문 완료 패널 추가
 	public void addOrderEndPanel() {
 		
@@ -587,26 +503,148 @@ public class MainGUI extends JFrame {
 		info.setHorizontalTextPosition(JLabel.CENTER);
 		
 		// 홈버튼 액션 추가
-		home.addActionListener(new ActionListener() {		
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				takeOutOrEat.setVisible(true);
-				menuGUI.setVisible(false);
-				creditGUI.setVisible(false);
-				basketGUI.setVisible(false);
-				orderEndGUI.setVisible(false);
-				
-				// 저장되었던 메뉴 객체 및 가격 리셋 필요
-				//
-			}
-		});
-		
+		home.addActionListener(returnToHome);
+
 		takeOutOrEat.add(info);
 		
 		// 주문완료 객체 추가
 		add(orderEndGUI);
 		setOrderEndPanel(orderEndGUI);
 	}	
+	
+	
+	// ActionListener 클래스들 ==============================================================================
+	// 매장이용 버튼 액션 추가 
+	ActionListener takeEatButtonAction = new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			takeOutOrEat.setVisible(false);			
+			// 메뉴 패널 등장
+			menuGUI.setVisible(true);
+			// 바구니 패널 등장
+			basketGUI.setVisible(true);
+		}
+	}; // end takeEatButtonAction =======================================================================
+	
+	// 메뉴 버튼 액션 추가
+	ActionListener menuButtonAction = new ActionListener() {
+		public void actionPerformed(ActionEvent e) {
+			menu = getMenus();
+			if(e.getActionCommand() == "분식") {
+				menu[0].setVisible(true);
+				menu[1].setVisible(false);
+				menu[2].setVisible(false);
+				menu[3].setVisible(false);
+			} else if (e.getActionCommand() == "일식") {
+				menu[0].setVisible(false);
+				menu[1].setVisible(true);
+				menu[2].setVisible(false);
+				menu[3].setVisible(false);
+			} else if (e.getActionCommand() == "한식") {	
+				menu[0].setVisible(false);
+				menu[1].setVisible(false);
+				menu[2].setVisible(true);
+				menu[3].setVisible(false);
+			} else if (e.getActionCommand() == "양식") {
+				menu[0].setVisible(false);
+				menu[1].setVisible(false);
+				menu[2].setVisible(false);
+				menu[3].setVisible(true);
+			} 
+		}
+	}; // end menuButtonAction ============================================================================
+	
+	// payment , back에 액션 추가
+	ActionListener basketButtonAction = new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (e.getActionCommand() == "처음으로 돌아가기") { // @@@@@@@@@@@@@@@@@ 기능 추가중 // 일부 객체 리셋? 필요
+				
+				menuGUI.setVisible(false);
+				basketGUI.setVisible(false);
+				creditGUI.setVisible(false);
+				takeOutOrEat.setVisible(true);
+				
+				model.removeAllElements();
+				model.addElement("원하시는 음식의 수량을 +(더하기) 버튼으로 추가 후 확인을 눌러주세요.\n");
+				model.addElement("음식의 수량을 줄이려면 -(빼기) 버튼을 눌러주세요.\n");
+				
+			} else if (e.getActionCommand() == "결제") {
+				menuGUI.setVisible(false);
+				basketGUI.setVisible(false);
+				creditGUI.setVisible(true);
+			} else if (e.getActionCommand() == "모두 제거") {
+				model.removeAllElements();
+				model.addElement("원하시는 음식의 수량을 +(더하기) 버튼으로 추가 후 확인을 눌러주세요.\n");
+				model.addElement("음식의 수량을 줄이려면 -(빼기) 버튼을 눌러주세요.\n");
+			} else if (e.getActionCommand() == "선택한 메뉴 제거") {
+				if (model.getSize()<2) {
+					model.removeAllElements();
+					model.addElement("원하시는 음식의 수량을 +(더하기) 버튼으로 추가 후 확인을 눌러주세요.\n");
+					model.addElement("음식의 수량을 줄이려면 -(빼기) 버튼을 눌러주세요.\n");
+				} else {
+					model.remove(basketList.getSelectedIndex());
+				}
+			}
+		}
+	}; // end basketButtonAction ============================================================================
+	
+	// 메뉴로 돌아가기 액션
+	ActionListener returnToMenu = new ActionListener() {		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (e.getActionCommand() == "뒤로 돌아가기") {
+				basketGUI.setVisible(true);
+				menuGUI.setVisible(true);
+				creditGUI.setVisible(false);
+			}
+		}
+	};// end returnToMenu =================================================================================
+	
+	// 결제 방법 버튼에 액션 추가
+	ActionListener paybtActionListener = new ActionListener() {	
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			creditMethod = getCreditMethodPanel();
+			creditGUI.setVisible(false);
+			basketGUI.setVisible(false);
+			if(e.getActionCommand() == "신용/체크/지역화폐 카드") {
+				creditMethod[0].setVisible(true);
+				creditMethod[1].setVisible(false);
+				creditMethod[2].setVisible(false);
+				creditMethod[3].setVisible(false);
+			} else if (e.getActionCommand() == "현금") {
+				creditMethod[0].setVisible(false);
+				creditMethod[1].setVisible(true);
+				creditMethod[2].setVisible(false);
+				creditMethod[3].setVisible(false);
+			} else if (e.getActionCommand() == "페이앱") {	
+				creditMethod[0].setVisible(false);
+				creditMethod[1].setVisible(false);
+				creditMethod[2].setVisible(true);
+				creditMethod[3].setVisible(false);
+			} else if (e.getActionCommand() == "기프트카드/쿠폰") {
+				creditMethod[0].setVisible(false);
+				creditMethod[1].setVisible(false);
+				creditMethod[2].setVisible(false);
+				creditMethod[3].setVisible(true);
+			} 
+		}
+	}; //end paybtActionListener =================================================================================
+	
+	ActionListener returnToHome = new ActionListener() {		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			takeOutOrEat.setVisible(true);
+			menuGUI.setVisible(false);
+			creditGUI.setVisible(false);
+			basketGUI.setVisible(false);
+			orderEndGUI.setVisible(false);
+			
+			// 저장되었던 메뉴 객체 및 가격 리셋 필요
+			//
+		}
+	}; // end returnToHome =================================================================================
 	
 	// 패널 객체 저장 및 불러오기 =======================================================
 	public void setTakeOrEatPanel(JPanel takeOutOrEat) {
@@ -625,12 +663,28 @@ public class MainGUI extends JFrame {
 		return menuGUI;
 	}
 	
+	public void setMenus(JPanel[] menu) {
+		this.menu = menu;
+	}
+	
+	public JPanel[] getMenus() {
+		return menu;
+	}
+	
 	public void setCreditPanel(JPanel creditGUI) {
 		this.creditGUI = creditGUI;
 	}
 	
 	public JPanel getCreditPanel() {
 		return creditGUI;
+	}
+	
+	public void setCreditMethodPanel(JPanel[] creditMethod) {
+		this.creditMethod = creditMethod;
+	}
+	
+	public JPanel[] getCreditMethodPanel() {
+		return creditMethod;
 	}
 	
 	public void setBasketPanel(JPanel basketGUI) {
@@ -649,14 +703,30 @@ public class MainGUI extends JFrame {
 		return orderEndGUI;
 	}
 	
-	public void setBasketText(JTextArea basketText) {
-		this.basketText = basketText;
+	public void setBasketPane(JScrollPane basketPane) {
+		this.basketPane = basketPane;
 	}
 	
-	public JTextArea getBasketText() {
-		return basketText;
+	public JScrollPane getBasketPane() {
+		return basketPane;
 	}
 	
+	public void setBasketList(JList basketList) {
+		this.basketList = basketList;
+	}
+	
+	public JList setBasketList() {
+		return basketList;
+	}
+	
+	public void setModel(DefaultListModel<String> model) {
+		this.model = model;
+	}
+	
+	public DefaultListModel<String> getModel() {
+		return model;
+	}
+
 	// end setter getter ======================================================
 	
 	// 데이터 호출하기
@@ -664,4 +734,5 @@ public class MainGUI extends JFrame {
 	public void getTotalPrice() {
 
 	}// end getTotalPrice =======================================================
+	
 }
