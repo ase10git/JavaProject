@@ -15,7 +15,6 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 
@@ -33,6 +32,8 @@ public class MainGUI extends JFrame {
 	int numOfMenu = 4;
 	int numOfPayment = 4;
 	String imageAddr = "src/Kiosk/Images/";
+	String announce1 = "원하시는 음식의 수량을 +(더하기) 버튼으로 추가 후 확인을 눌러주세요.\n";
+	String announce2 = "음식의 수량을 줄이려면 -(빼기) 버튼을 눌러주세요.\n";
 	
 	private JPanel takeOutOrEat;
 	private JPanel menuGUI;
@@ -41,7 +42,7 @@ public class MainGUI extends JFrame {
 	private JPanel[] creditMethod;
 	private JPanel basketGUI;
 	private JPanel orderEndGUI;
-	private JList basketList;
+	private JList<String> basketList;
 	private DefaultListModel<String> model;
 	private JScrollPane basketPane;
 	
@@ -307,6 +308,8 @@ public class MainGUI extends JFrame {
 		// 버튼 추가
 		JButton[] basketbt = new JButton[4];
 		String[] name = {"결제", "처음으로 돌아가기", "모두 제거", "선택한 메뉴 제거"};
+		int[] removebtWidth = {120, 160};
+		int[] removebtX = {130, 130+removebtWidth[0]};
 		for (int i = 0; i < basketbt.length; i++) {
 			basketbt[i] = new JButton(name[i]);	
 			basketbt[i].setHorizontalTextPosition(JLabel.CENTER);
@@ -314,7 +317,7 @@ public class MainGUI extends JFrame {
 				basketbt[i].setBounds(600, i*140, 190, 140-i*60);
 				basketbt[i].setFont(kfont);
 			} else {
-				basketbt[i].setBounds(270+150*(i-3), 5, 150, 40);
+				basketbt[i].setBounds(removebtX[i-2], 5, removebtWidth[i-2], 40);
 				basketbt[i].setFont(mfont);
 			}
 		}
@@ -337,8 +340,8 @@ public class MainGUI extends JFrame {
 		
 	public void addBasketList() {	
 		model = new DefaultListModel<String>();
-		model.addElement("원하시는 음식의 수량을 +(더하기) 버튼으로 추가 후 확인을 눌러주세요.\n");
-		model.addElement("음식의 수량을 줄이려면 -(빼기) 버튼을 눌러주세요.\n");
+		model.addElement(announce1);
+		model.addElement(announce2);
 		
 		basketList = new JList<String>(model);
 		basketList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -442,8 +445,69 @@ public class MainGUI extends JFrame {
 		for (int i = 0; i < numOfPayment; i++) {
 			creditMethod[i] = new JPanel(null);
 			creditMethod[i].setBounds(0, 100, frameWidth, frameHeight-100);
-			creditMethod[i].setBackground(Color.LIGHT_GRAY);
+			creditMethod[i].setBackground(Color.WHITE);
 			creditMethod[i].setVisible(false);
+			if(i==0) {
+				JLabel a = new JLabel("카드를 넣어주세요");
+				a.setBounds(250, 150, 300, 100);
+				a.setFont(kfont);
+				a.setHorizontalAlignment(JLabel.CENTER);
+				a.setHorizontalTextPosition(JLabel.CENTER);
+				creditMethod[i].add(a);
+			
+				creditMethod[i].revalidate();
+				JLabel b = new JLabel("결제가 완료되었습니다. 카드를 뽑아주세요...");
+				a.setBounds(150, 150, 500, 100);
+				a.setFont(kfont);
+				a.setHorizontalAlignment(JLabel.CENTER);
+				a.setHorizontalTextPosition(JLabel.CENTER);
+				//creditMethod[i].remove(a);
+				creditMethod[i].add(b);
+				
+			}
+			else if(i==1) {
+				JLabel a = new JLabel("현금은 카운터에서 결제해주세요");
+				a.setBounds(250, 150, 300, 100);
+				a.setFont(kfont);
+				a.setHorizontalAlignment(JLabel.CENTER);
+				a.setHorizontalTextPosition(JLabel.CENTER);
+				creditMethod[i].add(a);
+				//creditMethod[i].remove(a);
+				
+			}
+			else if(i==2) {
+				JLabel a = new JLabel("페이앱의 QR코드를 리더기에 인식해주세요");
+				a.setBounds(200, 150, 400, 100);
+				a.setFont(kfont);
+				a.setHorizontalAlignment(JLabel.CENTER);
+				a.setHorizontalTextPosition(JLabel.CENTER);
+				creditMethod[i].add(a);
+				
+				JLabel b = new JLabel("결제가 완료되었습니다. 잠시만 기다려주세요...");
+				a.setBounds(150, 150, 500, 100);
+				a.setFont(kfont);
+				a.setHorizontalAlignment(JLabel.CENTER);
+				a.setHorizontalTextPosition(JLabel.CENTER);
+				//creditMethod[i].remove(a);
+				creditMethod[i].add(b);
+			}
+			else if(i==3) {
+				JLabel a = new JLabel("기프트콘 및 쿠폰의 바코드를 리더기에 인식해주세요");
+				a.setBounds(150, 150, 500, 100);
+				a.setFont(kfont);
+				a.setHorizontalAlignment(JLabel.CENTER);
+				a.setHorizontalTextPosition(JLabel.CENTER);
+				creditMethod[i].add(a);
+				
+				
+				JLabel b = new JLabel("결제가 완료되었습니다. 잠시만 기다려주세요...");
+				a.setBounds(150, 150, 500, 100);
+				a.setFont(kfont);
+				a.setHorizontalAlignment(JLabel.CENTER);
+				a.setHorizontalTextPosition(JLabel.CENTER);
+				//creditMethod[i].remove(a);
+				creditMethod[i].add(b);
+			}
 			
 			creditMethod[i].add(backButton(creditMethod[i]));
 			//creditMethod[i].add(paymentConfirm());
@@ -453,6 +517,15 @@ public class MainGUI extends JFrame {
 		setCreditMethodPanel(creditMethod);
 		return creditMethod;
 	}// end addCreditMethod ===============================================
+	
+//	public void delay() {
+//		try {
+//            Thread.sleep(3000);
+//            System.out.println("3초 경과");
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+//	}
 	
 	/*
 	// 결제 금액 확인용 창 생성
@@ -558,7 +631,7 @@ public class MainGUI extends JFrame {
 	ActionListener basketButtonAction = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if (e.getActionCommand() == "처음으로 돌아가기") { // @@@@@@@@@@@@@@@@@ 기능 추가중 // 일부 객체 리셋? 필요
+			if (e.getActionCommand() == "처음으로 돌아가기") {
 				
 				menuGUI.setVisible(false);
 				basketGUI.setVisible(false);
@@ -566,8 +639,8 @@ public class MainGUI extends JFrame {
 				takeOutOrEat.setVisible(true);
 				
 				model.removeAllElements();
-				model.addElement("원하시는 음식의 수량을 +(더하기) 버튼으로 추가 후 확인을 눌러주세요.\n");
-				model.addElement("음식의 수량을 줄이려면 -(빼기) 버튼을 눌러주세요.\n");
+				model.addElement(announce1);
+				model.addElement(announce2);
 				
 			} else if (e.getActionCommand() == "결제") {
 				menuGUI.setVisible(false);
@@ -575,16 +648,15 @@ public class MainGUI extends JFrame {
 				creditGUI.setVisible(true);
 			} else if (e.getActionCommand() == "모두 제거") {
 				model.removeAllElements();
-				model.addElement("원하시는 음식의 수량을 +(더하기) 버튼으로 추가 후 확인을 눌러주세요.\n");
-				model.addElement("음식의 수량을 줄이려면 -(빼기) 버튼을 눌러주세요.\n");
+				model.addElement(announce1);
+				model.addElement(announce2);
 			} else if (e.getActionCommand() == "선택한 메뉴 제거") {
-				if (model.getSize()<2) {
+				if (model.getSize()==1) {
 					model.removeAllElements();
-					model.addElement("원하시는 음식의 수량을 +(더하기) 버튼으로 추가 후 확인을 눌러주세요.\n");
-					model.addElement("음식의 수량을 줄이려면 -(빼기) 버튼을 눌러주세요.\n");
-				} else {
+					model.addElement(announce1);
+					model.addElement(announce2);
+				} else if (model.getSize()>1 && basketList.getSelectedIndex()>0)
 					model.remove(basketList.getSelectedIndex());
-				}
 			}
 		}
 	}; // end basketButtonAction ============================================================================
@@ -711,11 +783,11 @@ public class MainGUI extends JFrame {
 		return basketPane;
 	}
 	
-	public void setBasketList(JList basketList) {
+	public void setBasketList(JList<String> basketList) {
 		this.basketList = basketList;
 	}
 	
-	public JList setBasketList() {
+	public JList<String> setBasketList() {
 		return basketList;
 	}
 	
