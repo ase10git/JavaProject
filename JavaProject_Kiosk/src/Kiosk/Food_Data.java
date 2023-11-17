@@ -1,6 +1,6 @@
 package Kiosk;
 
-import kiosk_DB.Menu;
+//import kiosk_DB.Menu;
 import javax.swing.JButton;
 
 public class Food_Data {
