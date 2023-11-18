@@ -7,6 +7,8 @@ import java.awt.Font;
 import java.awt.TextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
@@ -18,6 +20,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.Timer;
 
 /* 키오스크의 GUI를 생성하는 클래스
  * 메인 화면, 메뉴 화면, 결제화면
@@ -33,10 +36,17 @@ public class MainGUI extends JFrame {
 	
 	int numOfMenu = 4;
 	int numOfPayment = 4;
+	int homeCount = 10;
 	Color background = new Color(255, 210, 89);
 	String imageAddr = "src/Kiosk/Images/";
 	String announce1 = "원하시는 음식의 수량을 [+](더하기) 버튼으로 추가 후, [확인] 버튼을 눌러주세요.";
 	String announce2 = "메뉴를 제거하려면 제거할 메뉴를 선택하고, [선택한 메뉴 제거] 버튼을 눌러주세요.";
+	String payment = "";
+	boolean paymentEnd = false;
+	boolean isHome = false;
+	boolean isCredit = false;
+	boolean isCreditMethod = false;
+	boolean isOrderEnd = false;
 	
 	private JPanel mainTitle;
 	private JPanel takeOutOrEat;
@@ -49,8 +59,6 @@ public class MainGUI extends JFrame {
 	private JList<String> basketList;
 	private DefaultListModel<String> model;
 	private JScrollPane basketPane;
-	
-	String payment = "";
 	
 	// 메인 프레임 생성
 	public MainGUI() {
@@ -75,21 +83,22 @@ public class MainGUI extends JFrame {
 		add(mainTitle);
 		
 		// 패널 추가
-		addTakeOrEatPanel();
+		addTakeOrEatPanel();	
 		addMenuPanel();
 		addBasketPanel();
-		addCreditPanel();
 		
 		// 패널 표시
 		takeOutOrEat = getTakeOrEatPanel();
 		menuGUI = getMenuPanel();
 		basketGUI = getBasketPanel();
-		creditGUI = getCreditPanel();	
+		//creditGUI = getCreditPanel();
+		//orderEndGUI = getOrderEndPanel();
 		
 		takeOutOrEat.setVisible(true);
 		menuGUI.setVisible(false);
 		basketGUI.setVisible(false);
-		creditGUI.setVisible(false);
+		//creditGUI.setVisible(false);
+		//orderEndGUI.setVisible(false);
 		
 		// 메인 프레임 크기 설정
 		setBounds(100, 100, frameWidth, frameHeight);
@@ -99,7 +108,7 @@ public class MainGUI extends JFrame {
 		setLocationRelativeTo(null);
 		setResizable(false);
 		
-	} // end mainGUI ============================================================
+	} // end mainGUI ==================================================================================================================================
 	
 	// 매장 이용 방법 선택 (JPanel takeOutOrEat)
 	public void addTakeOrEatPanel() {
@@ -132,7 +141,30 @@ public class MainGUI extends JFrame {
 		// JPanel 객체 저장
 		add(takeOutOrEat);
 		setTakeOrEatPanel(takeOutOrEat);
-	} // end add TakeOrEatPanel ===============================================
+		
+		// 컴포턴트 리스너 추가
+		takeOrEatComponentLS();
+
+	} // end addTakeOrEatPanel 
+	
+	// takeOrEat 패널의 ComponenetListener 추가
+	private void takeOrEatComponentLS() {
+		takeOutOrEat.addComponentListener(new ComponentAdapter() {		
+			@Override
+			public void componentShown(ComponentEvent e) {
+				// 저장되었던 메뉴 객체 및 가격 리셋
+				getModel().removeAllElements();
+				getModel().addElement(announce1);
+				getModel().addElement(announce2);
+				isHome = true;
+			}
+
+			@Override
+			public void componentHidden(ComponentEvent e) {
+				isHome = false;
+			}
+		});	
+	} // end takeOrEatComponentLS ==================================================================================================================================
 	
 	// 메뉴 패널 추가(JPanel menuGUI)
 	public void addMenuPanel() {
@@ -163,9 +195,9 @@ public class MainGUI extends JFrame {
 		// 메뉴 패널 객체 저장
 		add(menuGUI);
 		setMenuPanel(menuGUI);
-	} // end addMenuGUI -------------------------------------------------------
+	} // end addMenuGUI 
 	
-	// 메뉴 종류 화면 추가 ---------------------------------------------------------
+	// 메뉴 종류 화면 추가 
 	public JPanel[] addMenus() { 
 		
 		JPanel[] menu = new JPanel[numOfMenu];
@@ -204,14 +236,16 @@ public class MainGUI extends JFrame {
 				}
 				String snackNamePrice = "<html><body style='text-align: center'>"+menu_list[i][j]+"<br>"+menu_price[i][j]+" 원</html>";
 				snackName[j] = new JLabel(snackNamePrice);
-				snackName[j].setBounds(bt[j].getX()+10,bt[j].getY()-50,115,50);
+				int namepos = bt[j].getX() + (bt[j].getWidth())/2 - 145/2;
+				snackName[j].setBounds(namepos,bt[j].getY()-50,145,50);
 				snackName[j].setFont(kfont);
 				snackName[j].setHorizontalAlignment(JLabel.CENTER);
 				snackName[j].setHorizontalTextPosition(JLabel.CENTER);
 				
 				num[j] = new TextField("0");
 				num[j].setBackground(Color.white);
-				num[j].setBounds(bt[j].getX()+45,bt[j].getY()+135,40,30);
+				int numpos = bt[j].getX() + ((int)bt[j].getBounds().getWidth())/2 - 40/2;
+				num[j].setBounds(numpos,bt[j].getY()+135,40,30);
 				num[j].setFont(kfont);
 				num[j].setEditable(false);
 				
@@ -221,12 +255,14 @@ public class MainGUI extends JFrame {
 				minus[j].setFont(kfont);
 				
 				plus[j] = new Button("+");
-				plus[j].setBounds(bt[j].getX()+95,num[j].getY()+5,25,20);
+					int pluspos = bt[j].getX() + bt[j].getWidth() - (10 + 25);
+				plus[j].setBounds(pluspos,num[j].getY()+5,25,20);
 				plus[j].setEnabled(true);
 				plus[j].setFont(kfont);
 				
 				ok[j] = new JButton("확인");
-				ok[j].setBounds(bt[j].getX()+25,num[j].getY()+35,80,30);
+					int okpos = bt[j].getX() + (bt[j].getWidth())/2 - 80/2;
+				ok[j].setBounds(okpos,num[j].getY()+35,80,30);
 				ok[j].setFont(kfont);
 				ok[j].setHorizontalAlignment(JLabel.CENTER);
 				ok[j].setHorizontalTextPosition(JLabel.CENTER);
@@ -256,13 +292,14 @@ public class MainGUI extends JFrame {
 							String prevStr2 = "메뉴를 제거";
 							boolean prevStrRemain = (model.getElementAt(model.getSize()-1).contains(prevStr) 
 													||model.getElementAt(model.getSize()-1).contains(prevStr2));
-							if (prevStrRemain) {
-								model.removeAllElements();
+							if (nums != 0) {
+								if (prevStrRemain) model.removeAllElements();
+							
+								sb.append(menu_list[menuCat][menuNum]).append(" : ").append(jf.getText()).append(" 개");
+								model.addElement(sb.toString());
+								jf.setText("0");
+								sb.setLength(0);
 							}
-							sb.append(menu_list[menuCat][menuNum]).append(" : ").append(jf.getText()).append(" 개");
-							model.addElement(sb.toString());
-							jf.setText("0");
-							sb.setLength(0);
 						}
 					}
 				};
@@ -287,9 +324,9 @@ public class MainGUI extends JFrame {
 		// 저장된 메뉴 패널 배열 반환 및 객체 저장
 		setMenus(menu);
 		return menu;
-	} // end addMenus ========================================================
+	} // end addMenus ==================================================================================================================================
 
-	// 장바구니 패널 추가(JPanel basketGUI) ========================================
+	// 장바구니 패널 추가(JPanel basketGUI) 
 	public void addBasketPanel() {
 		
 		basketGUI = new JPanel(null);
@@ -346,7 +383,7 @@ public class MainGUI extends JFrame {
 		// 장바구니 객체 추가
 		add(basketGUI);	
 		setBasketPanel(basketGUI);
-	} // end addBasketGUI --------------------------------------------------------
+	} // end addBasketGUI 
 		
 	public void addBasketList() {	
 		model = new DefaultListModel<String>();
@@ -369,7 +406,7 @@ public class MainGUI extends JFrame {
 		setBasketPane(basketPane);
 	}
 	
-	// 결제창 추가(JPanel creditGUI) ===============================================
+	// 결제창 추가(JPanel creditGUI) ==================================================================================================================================
 	public void addCreditPanel() {
 		
 		creditGUI = new JPanel(null);
@@ -401,10 +438,7 @@ public class MainGUI extends JFrame {
 			}
 			paybt[i].setFont(bfont);
 		}
-		
-		// 결제 방법 패널 생성
-		addCreditMethod();
-		
+				
 		// 메뉴로 돌아가기 버튼에 액션 추가
 		back.addActionListener(returnToMenu);
 
@@ -429,7 +463,23 @@ public class MainGUI extends JFrame {
 		// 결제창 객체 추가
 		add(creditGUI);
 		setCreditPanel(creditGUI);
-	} // end addCreditGUI ------------------------------------------------------
+		
+		addCreditComponentLS();
+	} // end addCreditGUI 
+	
+	private void addCreditComponentLS() {
+		creditGUI.addComponentListener(new ComponentAdapter() {
+			@Override
+			public void componentShown(ComponentEvent e) {
+				isCredit = true;
+			}
+		
+			@Override
+			public void componentHidden(ComponentEvent e) {
+				isCredit = false;
+			}
+		});
+	}
 	
 	// 결제 방법 별 결제창에서 뒤로 가기 버튼 추가
 	public JButton backButton(JPanel credit) {
@@ -448,12 +498,14 @@ public class MainGUI extends JFrame {
 		return back;
 	}
 	
-	// 결제 방법 별 결제창 생성 ------------------------------------------------------------
-	public JPanel[] addCreditMethod() {
+	// 결제 방법 별 결제창 생성
+	public void addCreditMethod() {
 		JPanel[] creditMethod = new JPanel[numOfPayment];
 		JLabel[] creditImage = new JLabel[numOfPayment];
 		String[] imageName = {"카드", "현금", "페이앱", "기프티콘"};
-		
+		String[] creditAnnounce = {"카드를 넣어주세요", "현금은 카운터에서 결제해주세요", 
+									"페이앱의 QR코드를 리더기에 인식해주세요", 
+									"<html>기프트콘 및 쿠폰의 바코드를<br>리더기에 인식해주세요</html>"};	
 		for (int i = 0; i < numOfPayment; i++) {
 			creditMethod[i] = new JPanel(null);
 			creditMethod[i].setBounds(0, 100, frameWidth, frameHeight-100);
@@ -464,104 +516,44 @@ public class MainGUI extends JFrame {
 			creditImage[i].setBounds(frameWidth/2-250, 90, 500, frameHeight-100);
 			creditImage[i].setVisible(true);
 			
-			if(i==0) {
-				JLabel a = new JLabel("카드를 넣어주세요");
-				a.setBounds(frameWidth/2-300/2, 80, 300, 100);
-				a.setFont(bfont);
-				a.setHorizontalAlignment(JLabel.CENTER);
-				a.setHorizontalTextPosition(JLabel.CENTER);
-				creditMethod[i].add(a);
-				creditMethod[i].add(creditImage[i]);
+			JLabel a = new JLabel(creditAnnounce[i]);
+			a.setBounds(frameWidth/2-700/2, 80, 700, 100);
+			a.setFont(bfont);
+			a.setHorizontalAlignment(JLabel.CENTER);
+			a.setHorizontalTextPosition(JLabel.CENTER);
 			
-				creditMethod[i].revalidate();
-				JLabel b = new JLabel("결제가 완료되었습니다. 카드를 뽑아주세요...");
-				a.setBounds(frameWidth/2-500/2, 80, 500, 100);
-				a.setFont(bfont);
-				a.setHorizontalAlignment(JLabel.CENTER);
-				a.setHorizontalTextPosition(JLabel.CENTER);
-				//creditMethod[i].remove(a);
-				creditMethod[i].add(b);
-				
-			}
-			else if(i==1) {
-				JLabel a = new JLabel("현금은 카운터에서 결제해주세요");
-				a.setBounds(frameWidth/2-400/2, 80, 400, 100);
-				a.setFont(bfont);
-				a.setHorizontalAlignment(JLabel.CENTER);
-				a.setHorizontalTextPosition(JLabel.CENTER);
-				creditMethod[i].add(a);
-				creditMethod[i].add(creditImage[i]);
-				//creditMethod[i].remove(a);
-				
-			}
-			else if(i==2) {
-				JLabel a = new JLabel("페이앱의 QR코드를 리더기에 인식해주세요");
-				a.setBounds(frameWidth/2-600/2, 80, 600, 100);
-				a.setFont(bfont);
-				a.setHorizontalAlignment(JLabel.CENTER);
-				a.setHorizontalTextPosition(JLabel.CENTER);
-				creditMethod[i].add(a);
-				creditMethod[i].add(creditImage[i]);
-				
-				JLabel b = new JLabel("결제가 완료되었습니다. 잠시만 기다려주세요...");
-				a.setBounds(frameWidth/2-500/2, 80, 500, 100);
-				a.setFont(bfont);
-				a.setHorizontalAlignment(JLabel.CENTER);
-				a.setHorizontalTextPosition(JLabel.CENTER);
-				//creditMethod[i].remove(a);
-				creditMethod[i].add(b);
-			}
-			else if(i==3) {
-				JLabel a = new JLabel("<html>기프트콘 및 쿠폰의 바코드를<br>리더기에 인식해주세요</html>");
-				a.setBounds(frameWidth/2-700/2, 80, 500, 100);
-				a.setFont(bfont);
-				a.setHorizontalAlignment(JLabel.CENTER);
-				a.setHorizontalTextPosition(JLabel.CENTER);
-				creditMethod[i].add(a);
-				creditMethod[i].add(creditImage[i]);
-				
-				JLabel b = new JLabel("결제가 완료되었습니다. 잠시만 기다려주세요...");
-				a.setBounds(frameWidth/2-500/2, 80, 500, 100);
-				a.setFont(bfont);
-				a.setHorizontalAlignment(JLabel.CENTER);
-				a.setHorizontalTextPosition(JLabel.CENTER);
-				//creditMethod[i].remove(a);
-				creditMethod[i].add(b);
-			}
-			
+			creditMethod[i].add(a);
+			creditMethod[i].add(creditImage[i]);
 			creditMethod[i].add(backButton(creditMethod[i]));
-			//creditMethod[i].add(paymentConfirm());
+			creditMethod[i].revalidate();
+			
 			add(creditMethod[i]);
 		}
 		// 결제 방법 창 객체 저장 및 반환
 		setCreditMethodPanel(creditMethod);
-		return creditMethod;
-	}// end addCreditMethod ===============================================
+		
+		// 각 결제 방법 창에 ComponenetListener 추가
+		addCreditMethodComponentLS();
+	}// end addCreditMethod 
 	
-//	public void delay() {
-//		try {
-//            Thread.sleep(3000);
-//            System.out.println("3초 경과");
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-//	}
-	
-	// 결제 확인 후 새 창 띄우기
-	/*
-	public boolean paymentCheck(String payment) {
-		BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
-		try {
-			if (input.readLine().equals(payment)) {
-				return true;
-			}
-		} catch (IOException e) {
-			System.out.println("금액이 정확하지 않습니다. 결제를 취소합니다.");
+	private void addCreditMethodComponentLS() {
+		creditMethod = getCreditMethodPanel();
+		for (int i = 0; i < creditMethod.length; i++) {
+			creditMethod[i].addComponentListener(new ComponentAdapter() {
+				
+			@Override
+				public void componentShown(ComponentEvent e) {
+					// creditTimer 가동
+					isCreditMethod = true;
+					startCreditTimer();
+				}	
+			@Override
+				public void componentHidden(ComponentEvent e) {					
+					isCreditMethod = false;
+				}
+			});
 		}
-
-		return false;
-	}
-	*/
+	} // end addCreditMethodComponentLS ==================================================================================================================================
 	
 	// 주문 완료 패널 추가
 	public void addOrderEndPanel() {
@@ -569,42 +561,74 @@ public class MainGUI extends JFrame {
 		JPanel orderEndGUI = new JPanel(null);
 		orderEndGUI.setVisible(false);
 		orderEndGUI.setBounds(0, 100, 800, 800);
+		orderEndGUI.setBackground(background);
+		//orderEndGUI.setEnabled(false); // 결제 완료 전까진 사용 불가
 		
 		// 주문 완료 및 홈버튼 추가
 		JLabel info = new JLabel("<html><body style='text-align: center'>결제가 완료되었습니다.<br>주문 번호표를 확인해주세요.</html>");
-		JButton home = new JButton("처음 화면으로 돌아가기");
-		
-		home.setBounds(0, 500, frameWidth/2, 300);
-		home.setFont(kfont);
-		
-		info.setBounds(frameWidth/2-150, 400, 300, 100);
-		info.setFont(kfont);
+		info.setBounds(frameWidth/2-400/2, 100, 400, 100);
+		info.setFont(bfont);
 		info.setHorizontalAlignment(JLabel.CENTER);
 		info.setHorizontalTextPosition(JLabel.CENTER);
+
+		JLabel countDown = new JLabel();
+		countDown.setBounds(frameWidth/2-400/2, 250, 400, 100);
+		countDown.setFont(bfont);
+		countDown.setHorizontalAlignment(JLabel.CENTER);
+		countDown.setHorizontalTextPosition(JLabel.CENTER);
+		
+		JButton home = new JButton("처음 화면으로 돌아가기");
+		home.setBounds(frameWidth/2-300/2, 350, 300, 100);
+		home.setFont(bfont);
 		
 		// 홈버튼 액션 추가
-		home.addActionListener(returnToHome);
-
-		takeOutOrEat.add(info);
+		home.addActionListener(new ActionListener() {			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				returnToHome();
+			}
+		});
 		
+		orderEndGUI.add(info);
+		orderEndGUI.add(countDown);
+		orderEndGUI.add(home);
+				
 		// 주문완료 객체 추가
 		add(orderEndGUI);
 		setOrderEndPanel(orderEndGUI);
-	}	
+		
+		// ComponentListener 추가
+		addOrderEndComponentLS();
+		
+		// 결제 화면 표시 및 자동 복귀
+		autoHome(getOrderEndPanel());
+	}
 	
-	
-	// ActionListener 클래스들 ==============================================================================
+	private void addOrderEndComponentLS() {
+		orderEndGUI.addComponentListener(new ComponentAdapter() {
+		@Override
+		public void componentShown(ComponentEvent e) {
+			isOrderEnd = true;
+		}
+		@Override
+			public void componentHidden(ComponentEvent e) {
+				isOrderEnd = false;
+			}
+		});
+	} // end addOrderEndComponentLS
+		
+	// ActionListener 클래스들 ==================================================================================================================================
 	// 매장이용 버튼 액션 추가 
 	ActionListener takeEatButtonAction = new ActionListener() {
 		@Override
-		public void actionPerformed(ActionEvent e) {
+		public void actionPerformed(ActionEvent e) {		
 			takeOutOrEat.setVisible(false);
 			mainTitle.setVisible(false);
 			// 메뉴, 바구니 패널 등장
 			menuGUI.setVisible(true);
 			basketGUI.setVisible(true);
 		}
-	}; // end takeEatButtonAction =======================================================================
+	}; // end takeEatButtonAction 
 	
 	// 메뉴 버튼 액션 추가
 	ActionListener menuButtonAction = new ActionListener() {
@@ -632,7 +656,18 @@ public class MainGUI extends JFrame {
 				menu[3].setVisible(true);
 			} 
 		}
-	}; // end menuButtonAction ============================================================================
+	}; // end menuButtonAction
+	
+	// 주문을 안 넣었을 때 결제 방지
+	private boolean noOrder() {
+		model = getModel();
+		for (int i = 0; i < model.getSize(); i++) {
+			if (model.get(i).contains(announce1) || model.get(i).contains(announce2)) {
+				return true;
+			}
+		}
+		return false;
+	}
 	
 	// payment , back에 액션 추가
 	ActionListener basketButtonAction = new ActionListener() {
@@ -642,7 +677,7 @@ public class MainGUI extends JFrame {
 				mainTitle.setVisible(true);
 				menuGUI.setVisible(false);
 				basketGUI.setVisible(false);
-				creditGUI.setVisible(false);
+				if (creditGUI!=null) creditGUI.setVisible(false);
 				takeOutOrEat.setVisible(true);
 				
 				model.removeAllElements();
@@ -650,10 +685,14 @@ public class MainGUI extends JFrame {
 				model.addElement(announce2);
 				
 			} else if (e.getActionCommand() == "결제") {
-				mainTitle.setVisible(true);
-				menuGUI.setVisible(false);
-				basketGUI.setVisible(false);
-				creditGUI.setVisible(true);
+				if (creditGUI==null) addCreditPanel(); // 버튼 눌렀을 때 creditGUI 생성
+				model = getModel();
+				if (!noOrder()) {
+					mainTitle.setVisible(true);
+					menuGUI.setVisible(false);
+					basketGUI.setVisible(false);
+					creditGUI.setVisible(true);
+				}
 			} else if (e.getActionCommand() == "모두 제거") {
 				model.removeAllElements();
 				model.addElement(announce1);
@@ -683,52 +722,117 @@ public class MainGUI extends JFrame {
 				creditGUI.setVisible(false);
 			}
 		}
-	};// end returnToMenu =================================================================================
+	};
+	
+	// 결제 대기 타이머 생성 및 가동
+	public void startCreditTimer() {
+		Timer timer = new Timer(3000, new ActionListener() {			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(!paymentEnd && isCreditMethod) {
+					System.out.println("3초 경과 : 결제 완료");
+					for (int i = 0; i < numOfPayment; i++) {
+						creditMethod[i].setVisible(false);
+					}
+					paymentEnd = true;
+					getOrderEndPanel().setVisible(true);
+				} else {
+					((Timer) e.getSource()).stop();
+					paymentEnd = false;
+				}
+			}
+		});
+		timer.start();
+	}
+	
+	// 홈 화면 자동으로 돌아가기
+	private void autoHome(JPanel orderEndGUI) {
+		orderEndGUI.addComponentListener(new ComponentAdapter() {		
+			@Override
+			public void componentShown(ComponentEvent e) {
+				startHomeTimer(orderEndGUI);
+			}
+		});
+	}
+	
+	// 자동 홈 복귀 타이머
+	public void startHomeTimer(JPanel orderEndGUI) {
+		Timer timer = new Timer(1000, new ActionListener() {			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (!isHome && isOrderEnd) {
+					if (homeCount > 0) {						
+						System.out.println(homeCount+"초 뒤에 홈으로 복귀");
+						((JLabel)orderEndGUI.getComponent(1)).setText(homeCount+"초 뒤 처음 화면으로 돌아갑니다.");
+						orderEndGUI.repaint();
+						setOrderEndPanel(orderEndGUI);	
+						homeCount--;
+					} else if (homeCount == 0) {
+						((Timer) e.getSource()).stop();
+						homeCount = 10;
+						returnToHome();
+					}
+				} else {
+					((Timer) e.getSource()).stop();
+					homeCount = 10;
+				}
+			}
+		});
+		timer.start();
+	}
 	
 	// 결제 방법 버튼에 액션 추가
-	ActionListener paybtActionListener = new ActionListener() {	
+	ActionListener paybtActionListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			if(creditMethod==null) addCreditMethod(); // creditMethod 창 생성
+			if(orderEndGUI == null) addOrderEndPanel(); // orderEndGUI 창 생성			
 			creditMethod = getCreditMethodPanel();
 			creditGUI.setVisible(false);
-			basketGUI.setVisible(false);
+			basketGUI.setVisible(false);		
+		
 			if(e.getActionCommand() == "신용/체크/e음 카드") {
 				creditMethod[0].setVisible(true);
 				creditMethod[1].setVisible(false);
 				creditMethod[2].setVisible(false);
-				creditMethod[3].setVisible(false);
+				creditMethod[3].setVisible(false);				
 			} else if (e.getActionCommand() == "현금") {
 				creditMethod[0].setVisible(false);
 				creditMethod[1].setVisible(true);
 				creditMethod[2].setVisible(false);
-				creditMethod[3].setVisible(false);
+				creditMethod[3].setVisible(false);				
 			} else if (e.getActionCommand() == "페이앱") {	
 				creditMethod[0].setVisible(false);
 				creditMethod[1].setVisible(false);
 				creditMethod[2].setVisible(true);
-				creditMethod[3].setVisible(false);
+				creditMethod[3].setVisible(false);				
 			} else if (e.getActionCommand() == "기프트카드/쿠폰") {
 				creditMethod[0].setVisible(false);
 				creditMethod[1].setVisible(false);
 				creditMethod[2].setVisible(false);
 				creditMethod[3].setVisible(true);
-			} 
+			}
+			
+			// creditTimer 가동
+			//startCreditTimer();
 		}
 	}; //end paybtActionListener =================================================================================
 	
-	ActionListener returnToHome = new ActionListener() {		
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			takeOutOrEat.setVisible(true);
-			menuGUI.setVisible(false);
-			creditGUI.setVisible(false);
-			basketGUI.setVisible(false);
-			orderEndGUI.setVisible(false);
-			
-			// 저장되었던 메뉴 객체 및 가격 리셋 필요
-			//
-		}
-	}; // end returnToHome =================================================================================
+	// 결제 후 처음 화면으로 돌아가기
+	public void returnToHome() {
+		takeOutOrEat.setVisible(true);
+		menuGUI.setVisible(false);
+		creditGUI.setVisible(false);
+		basketGUI.setVisible(false);
+		orderEndGUI.setVisible(false);
+		
+		/*
+		// 저장되었던 메뉴 객체 및 가격 리셋
+		getModel().removeAllElements();
+		getModel().addElement(announce1);
+		getModel().addElement(announce2);
+		*/
+	}
 	
 	// 패널 객체 저장 및 불러오기 =======================================================
 	public void setMainTitlePanel(JPanel mainTitle) {
