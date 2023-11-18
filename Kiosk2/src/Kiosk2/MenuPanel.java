@@ -16,16 +16,16 @@ public class MenuPanel extends MainGUI2{
 	private JPanel menuGUI;
 	private JPanel[] menu;
 	
-	BasketPanel basketPanel;
-	DefaultListModel<String> model = basketPanel.getModel();
-	
 	public MenuPanel() {
 		
 		JPanel menuGUI = new JPanel(null);
 		menuGUI.setBounds(0, 100, frameWidth, 550);
 		menuGUI.setBackground(Color.WHITE);
-		menuGUI.setVisible(false);
-		
+		menuGUI.setVisible(false);	
+		setMenuPanel(menuGUI);
+	}
+	
+	public void init() {
 		// 메뉴 버튼 추가
 		JButton[] menubt = new JButton[numOfMenu];
 		String[] name = {"분식", "일식", "한식", "양식"};
@@ -33,23 +33,20 @@ public class MenuPanel extends MainGUI2{
 			menubt[i] = new JButton(name[i]);
 		}
 		
-		// 메뉴 화면들 추가
-		//addMenus();
-		
 		// 버튼 설정 및 버튼 추가
 		for (int i = 0; i < menubt.length; i++) {
 			menubt[i].setBounds(i*100, 0, 100, 100);
 			menubt[i].setFont(kfont);
 			menuGUI.add(menubt[i]);
-			menubt[i].addActionListener(menuButtonAction);
+			addMenuButtonAction(menubt[i]);
 		}	
 	
 		// 메뉴 패널 객체 저장
 		setMenuPanel(menuGUI);
-	} // end addMenuGUI -------------------------------------------------------
+	}
 	
 	// 메뉴 종류 화면 추가 ---------------------------------------------------------
-	public void addMenus() { 
+	public void addMenus(BasketPanel baksetPanel) { 
 		
 		JPanel[] menu = new JPanel[numOfMenu];
 		String[][] menu_list = {
@@ -112,39 +109,10 @@ public class MenuPanel extends MainGUI2{
 				menu[i].add(snackName[j]);
 				menu[i].add(num[j]);
 				
-				int menuNum = j;
 				// "+", "-", "확인" 버튼 액션 리스너
-				ActionListener plusMinusAction = new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						TextField jf = num[menuNum];
-						JLabel name = snackName[menuNum];
-						int nums = Integer.parseInt(jf.getText());// 중복 메뉴의 수량 추가
-						StringBuilder sb = new StringBuilder();
-						
-						if (e.getActionCommand() == "+") { // 수량 추가
-							jf.setText(String.valueOf(nums+1));
-						} else if (e.getActionCommand() == "-") { // 수량 감소
-							if (nums>0) {
-								jf.setText(String.valueOf(nums-1));
-							} else jf.setText("0");
-						} else if (e.getActionCommand() == "확인") { // model 에 추가
-							String prevStr = "음식의 수량";
-							
-							if (model.getElementAt(model.getSize()-1).contains(prevStr)) {
-								model.removeAllElements();
-							}
-							sb.append(name.getText()).append(" :\t").append(jf.getText()).append(" 개");
-							model.addElement(sb.toString());
-							jf.setText("0");
-							sb.setLength(0);
-						}
-					}
-				};
-
-				minus[j].addActionListener(plusMinusAction);
-				plus[j].addActionListener(plusMinusAction);
-				ok[j].addActionListener(plusMinusAction);
+				addPlusMinusAction(j, minus[j], null, num, snackName, baksetPanel);
+				addPlusMinusAction(j, plus[j], null, num, snackName, baksetPanel);
+				addPlusMinusAction(j, null, ok[j], num, snackName, baksetPanel);
 				
 				// 수량 증감, 확인 버튼 추가
 				menu[i].add(minus[j]);
@@ -155,42 +123,81 @@ public class MenuPanel extends MainGUI2{
 			menu[i].setBounds(0, 100, 800, 700);
 			menu[i].setBackground(Color.LIGHT_GRAY);
 			if (i==0) menu[i].setVisible(true);
-			else menu[i].setVisible(false);
-		
-			menuGUI.add(menu[i]);
+			else menu[i].setVisible(false);	
+			add(menu[i]);
 		}
-		// 저장된 메뉴 패널 배열 반환 및 객체 저장
+		// 저장된 메뉴 패널 배열 객체 저장
 		setMenus(menu);
 	} // end addMenus ========================================================
 	
 	// 메뉴 버튼 액션 추가
-	ActionListener menuButtonAction = new ActionListener() {
-		public void actionPerformed(ActionEvent e) {
-			menu = getMenus();
-			if(e.getActionCommand() == "분식") {
-				menu[0].setVisible(true);
-				menu[1].setVisible(false);
-				menu[2].setVisible(false);
-				menu[3].setVisible(false);
-			} else if (e.getActionCommand() == "일식") {
-				menu[0].setVisible(false);
-				menu[1].setVisible(true);
-				menu[2].setVisible(false);
-				menu[3].setVisible(false);
-			} else if (e.getActionCommand() == "한식") {	
-				menu[0].setVisible(false);
-				menu[1].setVisible(false);
-				menu[2].setVisible(true);
-				menu[3].setVisible(false);
-			} else if (e.getActionCommand() == "양식") {
-				menu[0].setVisible(false);
-				menu[1].setVisible(false);
-				menu[2].setVisible(false);
-				menu[3].setVisible(true);
-			} 
-		}
-	}; // end menuButtonAction ============================================================================
+	public void addMenuButtonAction(JButton bt) {
+		ActionListener menuButtonAction = new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				menu = getMenus();
+				if(e.getActionCommand() == "분식") {
+					menu[0].setVisible(true);
+					menu[1].setVisible(false);
+					menu[2].setVisible(false);
+					menu[3].setVisible(false);
+				} else if (e.getActionCommand() == "일식") {
+					menu[0].setVisible(false);
+					menu[1].setVisible(true);
+					menu[2].setVisible(false);
+					menu[3].setVisible(false);
+				} else if (e.getActionCommand() == "한식") {	
+					menu[0].setVisible(false);
+					menu[1].setVisible(false);
+					menu[2].setVisible(true);
+					menu[3].setVisible(false);
+				} else if (e.getActionCommand() == "양식") {
+					menu[0].setVisible(false);
+					menu[1].setVisible(false);
+					menu[2].setVisible(false);
+					menu[3].setVisible(true);
+				} 
+			}
+		};
+		bt.addActionListener(menuButtonAction);
+	}// end menuButtonAction ============================================================================
 
+	public void addPlusMinusAction(int j, Button bt, JButton jbt, TextField[] num, JLabel[] snackName, BasketPanel basketPanel) {
+		DefaultListModel<String> model = basketPanel.getModel();
+		
+		ActionListener plusMinusAction = new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				TextField jf = num[j];
+				JLabel name = snackName[j];
+				int nums = Integer.parseInt(jf.getText());// 중복 메뉴의 수량 추가
+				StringBuilder sb = new StringBuilder();
+				
+				if (e.getActionCommand() == "+") { // 수량 추가
+					jf.setText(String.valueOf(nums+1));
+				} else if (e.getActionCommand() == "-") { // 수량 감소
+					if (nums>0) {
+						jf.setText(String.valueOf(nums-1));
+					} else jf.setText("0");
+				} else if (e.getActionCommand() == "확인") { // model 에 추가
+					String prevStr = "음식의 수량";
+					
+					if (model.getElementAt(model.getSize()-1).contains(prevStr)) {
+						model.removeAllElements();
+					}
+					sb.append(name.getText()).append(" :\t").append(jf.getText()).append(" 개");
+					model.addElement(sb.toString());
+					jf.setText("0");
+					sb.setLength(0);
+				}
+			}
+		};		
+		if (bt != null && jbt == null) {
+			bt.addActionListener(plusMinusAction);
+		} else {
+			jbt.addActionListener(plusMinusAction);
+		}
+	}
+	
 	public void setMenuPanel(JPanel menuGUI) {
 		this.menuGUI = menuGUI;
 	}

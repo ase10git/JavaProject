@@ -35,8 +35,6 @@ public class MainGUI2 extends JFrame {
 	String announce1 = "원하시는 음식의 수량을 +(더하기) 버튼으로 추가 후 확인을 눌러주세요.\n";
 	String announce2 = "음식의 수량을 줄이려면 -(빼기) 버튼을 눌러주세요.\n";
 	
-	private JPanel takeOutOrEat;
-	
 	String payment = "";
 	
 	// 메인 프레임 생성
@@ -70,4 +68,25 @@ public class MainGUI2 extends JFrame {
 		
 	} // end mainGUI ============================================================
 	
+	public static void main(String[] args) {
+		MainGUI2 main = new MainGUI2();
+		
+		TakeOrEatPanel takeOrEatPanel = new TakeOrEatPanel();
+		BasketPanel basketPanel = new BasketPanel();
+		MenuPanel menuPanel = new MenuPanel();
+		CreditPanel creditPanel = new CreditPanel();
+		
+		menuPanel.init(); // 큰 메뉴판 생성
+		basketPanel.init();
+		takeOrEatPanel.init(menuPanel, basketPanel);
+		creditPanel.init(basketPanel);
+		
+		basketPanel.addBasketButton(takeOrEatPanel, menuPanel, creditPanel);		
+		menuPanel.addMenus(basketPanel); // 카테고리별 메뉴판 생성 및 객체저장
+		
+		main.add(takeOrEatPanel.getTakeOrEatPanel());
+		main.add(menuPanel.getMenuPanel());
+		main.add(basketPanel.getBasketPanel());
+		main.add(creditPanel.getCreditPanel());
+	}
 }

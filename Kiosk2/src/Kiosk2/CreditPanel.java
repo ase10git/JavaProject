@@ -13,28 +13,22 @@ public class CreditPanel extends MainGUI2{
 	// 결제창 추가(JPanel creditGUI) ===============================================
 	private JPanel creditGUI;
 	private JPanel[] creditMethod;
-	BasketPanel basketPanel;
-	JPanel basket = basketPanel.getBasketPanel();
-	MenuPanel menuPanel;
-	JPanel menu = menuPanel.getMenuPanel();
 	
 	public CreditPanel() {
 		
 		creditGUI = new JPanel(null);
 		creditGUI.setBounds(0, 100, frameWidth, frameHeight-100);
 		creditGUI.setVisible(false);
-		creditGUI.setBackground(Color.WHITE);	
-		
+		creditGUI.setBackground(Color.WHITE);
+		setCreditPanel(creditGUI);
+	}
+	
+	public void init(BasketPanel basketPanel) {
 		// 결제방법 안내 추가
 		JLabel paymentMethod = new JLabel("결제 방법을 선택해주세요.");
 		paymentMethod.setFont(kfont);
 		paymentMethod.setBounds(frameWidth/2-150, 250, 300, 50);
 		paymentMethod.setHorizontalAlignment(JLabel.CENTER);
-		
-		// 뒤로 가기 버튼 추가 => 메뉴 선택으로 돌아감
-		JButton back = new JButton("뒤로 돌아가기");
-		back.setFont(kfont);
-		back.setBounds(600, 690, 190, 80);
 		
 		// 결제방법 버튼과 패널 추가 => creditGUI에 추가
 		JButton[] paybt = new JButton[numOfPayment];
@@ -50,13 +44,41 @@ public class CreditPanel extends MainGUI2{
 			paybt[i].setFont(kfont);
 		}
 		
-		// 결제 방법 패널 생성
+		// 결제 방법 패널 생성 및 creditGUI에 추가
 		addCreditMethod();
 		
-		// 메뉴로 돌아가기 버튼에 액션 추가
-		back.addActionListener(returnToMenu);
+		// 결제방법 버튼 액션 추가
+		JPanel basketGUI = basketPanel.getBasketPanel();		
+		ActionListener paybtActionListener = new ActionListener() {	
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				creditMethod = getCreditMethodPanel();
+				creditGUI.setVisible(false);
+				basketGUI.setVisible(false);
+				if(e.getActionCommand() == "신용/체크/지역화폐 카드") {
+					creditMethod[0].setVisible(true);
+					creditMethod[1].setVisible(false);
+					creditMethod[2].setVisible(false);
+					creditMethod[3].setVisible(false);
+				} else if (e.getActionCommand() == "현금") {
+					creditMethod[0].setVisible(false);
+					creditMethod[1].setVisible(true);
+					creditMethod[2].setVisible(false);
+					creditMethod[3].setVisible(false);
+				} else if (e.getActionCommand() == "페이앱") {	
+					creditMethod[0].setVisible(false);
+					creditMethod[1].setVisible(false);
+					creditMethod[2].setVisible(true);
+					creditMethod[3].setVisible(false);
+				} else if (e.getActionCommand() == "기프트카드/쿠폰") {
+					creditMethod[0].setVisible(false);
+					creditMethod[1].setVisible(false);
+					creditMethod[2].setVisible(false);
+					creditMethod[3].setVisible(true);
+				} 
+			}
+		};
 
-		// 버튼 설정 및 creditGUI에 버튼 객체 추가
 		for (int i = 0; i < numOfPayment; i++) {
 			paybt[i].addActionListener(paybtActionListener);
 			creditGUI.add(paybt[i]);
@@ -71,7 +93,6 @@ public class CreditPanel extends MainGUI2{
 		
 		// creditGUI에 객체 추가
 		creditGUI.add(paymentMethod);
-		creditGUI.add(back);
 		creditGUI.add(totalPrice);
 		
 		// 결제창 객체 추가
@@ -79,7 +100,7 @@ public class CreditPanel extends MainGUI2{
 	} // end addCreditGUI ------------------------------------------------------
 	
 	// 결제 방법 별 결제창 생성 ------------------------------------------------------------
-	public JPanel[] addCreditMethod() {
+	private void addCreditMethod() {
 		JPanel[] creditMethod = new JPanel[numOfPayment];
 		
 		for (int i = 0; i < numOfPayment; i++) {
@@ -92,13 +113,13 @@ public class CreditPanel extends MainGUI2{
 			//creditMethod[i].add(paymentConfirm());
 			add(creditMethod[i]);
 		}
-		// 결제 방법 창 객체 저장 및 반환
+		// 결제 방법 창 객체 저장
 		setCreditMethodPanel(creditMethod);
-		return creditMethod;
 	}// end addCreditMethod ===============================================
 	
 	// 결제 방법 별 결제창에서 뒤로 가기 버튼 추가
-	public JButton backButton(JPanel credit) {
+	private JButton backButton(JPanel credit) {
+
 		// 뒤로 가기 버튼 추가 => 메뉴 선택으로 돌아감
 		JButton back = new JButton("뒤로 돌아가기");
 		back.setFont(kfont);
@@ -114,48 +135,31 @@ public class CreditPanel extends MainGUI2{
 		return back;
 	}
 	
-	// 결제 방법 버튼에 액션 추가
-	ActionListener paybtActionListener = new ActionListener() {	
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			creditMethod = getCreditMethodPanel();
-			creditGUI.setVisible(false);
-			basket.setVisible(false);
-			if(e.getActionCommand() == "신용/체크/지역화폐 카드") {
-				creditMethod[0].setVisible(true);
-				creditMethod[1].setVisible(false);
-				creditMethod[2].setVisible(false);
-				creditMethod[3].setVisible(false);
-			} else if (e.getActionCommand() == "현금") {
-				creditMethod[0].setVisible(false);
-				creditMethod[1].setVisible(true);
-				creditMethod[2].setVisible(false);
-				creditMethod[3].setVisible(false);
-			} else if (e.getActionCommand() == "페이앱") {	
-				creditMethod[0].setVisible(false);
-				creditMethod[1].setVisible(false);
-				creditMethod[2].setVisible(true);
-				creditMethod[3].setVisible(false);
-			} else if (e.getActionCommand() == "기프트카드/쿠폰") {
-				creditMethod[0].setVisible(false);
-				creditMethod[1].setVisible(false);
-				creditMethod[2].setVisible(false);
-				creditMethod[3].setVisible(true);
-			} 
-		}
-	}; //end paybtActionListener =================================================================================
-
 	// 메뉴로 돌아가기 액션
-	ActionListener returnToMenu = new ActionListener() {		
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			if (e.getActionCommand() == "뒤로 돌아가기") {
-				basket.setVisible(true);
-				menu.setVisible(true);
-				creditGUI.setVisible(false);
+	private void addReturnToMenu(BasketPanel basketPanel, MenuPanel menuPanel) {
+		JPanel basketGUI = basketPanel.getBasketPanel();
+		JPanel menuGUI = menuPanel.getMenuPanel();
+		
+		// 뒤로 가기 버튼 추가 => 메뉴 선택으로 돌아감
+		JButton back = new JButton("뒤로 돌아가기");
+		back.setFont(kfont);
+		back.setBounds(600, 690, 190, 80);
+		
+		ActionListener returnToMenu = new ActionListener() {		
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (e.getActionCommand() == "뒤로 돌아가기") {
+					basketGUI.setVisible(true);
+					menuGUI.setVisible(true);
+					creditGUI.setVisible(false);
+				}
 			}
-		}
-	};// end returnToMenu =================================================================================
+		};
+		// 메뉴로 돌아가기 버튼에 액션 추가
+		back.addActionListener(returnToMenu);
+		creditGUI.add(back);
+	}// end returnToMenu =================================================================================
+	
 	public void setCreditPanel(JPanel creditGUI) {
 		this.creditGUI = creditGUI;
 	}

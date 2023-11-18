@@ -20,20 +20,16 @@ public class BasketPanel extends MainGUI2{
 	private JList<String> basketList;
 	private DefaultListModel<String> model;
 	private JScrollPane basketPane;
-	
-	MenuPanel menuPanel;
-	JPanel menu = menuPanel.getMenuPanel();
-	CreditPanel creditPanel;
-	JPanel credit = creditPanel.getCreditPanel();
-	TakeOrEatPanel takeOrEatPanel;
-	JPanel takeOrEat = takeOrEatPanel.getTakeOrEatPanel();
-	
-	public BasketPanel() {
 		
+	public BasketPanel() {
 		basketGUI = new JPanel(null);
 		basketGUI.setBounds(0, 650, frameWidth, 250);
 		basketGUI.setVisible(false);
-		basketGUI.setBackground(Color.WHITE);	
+		basketGUI.setBackground(Color.WHITE);
+		setBasketPanel(basketGUI);
+	}
+	
+	public void init() {
 		
 		// 선택한 메뉴 title 추가
 		JLabel basketTitle = new JLabel("선택한 메뉴");
@@ -52,7 +48,17 @@ public class BasketPanel extends MainGUI2{
 		totalPrice.setHorizontalTextPosition(JLabel.RIGHT);
 		totalPrice.setText(disp[0]+disp[1]+disp[2]);
 		totalPrice.setBounds(430, 0, 200, 50);
-		
+
+		// 객체들을 basketGUI에 추가
+		basketGUI.add(basketTitle);
+		basketGUI.add(getBasketPane());
+		basketGUI.add(totalPrice);
+	
+		// 장바구니 객체 추가
+		setBasketPanel(basketGUI);
+	} // end addBasketGUI --------------------------------------------------------
+	
+	public void addBasketButton( TakeOrEatPanel takeOrEatPanel, MenuPanel menuPanel, CreditPanel creditPanel) {
 		// 버튼 추가
 		JButton[] basketbt = new JButton[4];
 		String[] name = {"결제", "처음으로 돌아가기", "모두 제거", "선택한 메뉴 제거"};
@@ -70,22 +76,52 @@ public class BasketPanel extends MainGUI2{
 			}
 		}
 
-		// 버튼에 액션 추가 및 basketGUI에 추가
+		// 전달받은 GUI
+		JPanel menuGUI = menuPanel.getMenuPanel();
+		JPanel takeOrEatGUI = takeOrEatPanel.getTakeOrEatPanel();
+		JPanel creditGUI = creditPanel.getCreditPanel();
+		
+		ActionListener basketButtonAction = new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (e.getActionCommand() == "처음으로 돌아가기") {
+						
+					menuGUI.setVisible(false);
+					basketGUI.setVisible(false);
+					creditGUI.setVisible(false);
+					takeOrEatGUI.setVisible(true);
+						
+					model.removeAllElements();
+					model.addElement(announce1);
+					model.addElement(announce2);
+						
+				} else if (e.getActionCommand() == "결제") {
+					menuGUI.setVisible(false);
+					basketGUI.setVisible(false);
+					creditGUI.setVisible(true);
+				} else if (e.getActionCommand() == "모두 제거") {
+					model.removeAllElements();
+					model.addElement(announce1);
+					model.addElement(announce2);
+				} else if (e.getActionCommand() == "선택한 메뉴 제거") {
+					if (model.getSize()==1) {
+						model.removeAllElements();
+						model.addElement(announce1);
+						model.addElement(announce2);
+					} else if (model.getSize()>1 && basketList.getSelectedIndex()>0)
+						model.remove(basketList.getSelectedIndex());
+				}
+			}
+		};
+			
+		// 버튼을 basketGUI에 추가
 		for (int i = 0; i < basketbt.length; i++) {
 			basketbt[i].addActionListener(basketButtonAction);
 			basketGUI.add(basketbt[i]);
 		}
-		
-		// 객체들을 basketGUI에 추가
-		basketGUI.add(basketTitle);
-		basketGUI.add(getBasketPane());
-		basketGUI.add(totalPrice);
+	}
 	
-		// 장바구니 객체 추가
-		setBasketPanel(basketGUI);
-	} // end addBasketGUI --------------------------------------------------------
-		
-	public void addBasketList() {	
+	private void addBasketList() {	
 		model = new DefaultListModel<String>();
 		model.addElement(announce1);
 		model.addElement(announce2);
@@ -106,39 +142,8 @@ public class BasketPanel extends MainGUI2{
 		setBasketPane(basketPane);
 	}
 	
-	// payment , back에 액션 추가
-	ActionListener basketButtonAction = new ActionListener() {
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			if (e.getActionCommand() == "처음으로 돌아가기") {
-				
-				menu.setVisible(false);
-				basketGUI.setVisible(false);
-				credit.setVisible(false);
-				takeOrEat.setVisible(true);
-				
-				model.removeAllElements();
-				model.addElement(announce1);
-				model.addElement(announce2);
-				
-			} else if (e.getActionCommand() == "결제") {
-				menu.setVisible(false);
-				basketGUI.setVisible(false);
-				credit.setVisible(true);
-			} else if (e.getActionCommand() == "모두 제거") {
-				model.removeAllElements();
-				model.addElement(announce1);
-				model.addElement(announce2);
-			} else if (e.getActionCommand() == "선택한 메뉴 제거") {
-				if (model.getSize()==1) {
-					model.removeAllElements();
-					model.addElement(announce1);
-					model.addElement(announce2);
-				} else if (model.getSize()>1 && basketList.getSelectedIndex()>0)
-					model.remove(basketList.getSelectedIndex());
-			}
-		}
-	}; // end basketButtonAction ============================================================================
+
+	// end basketButtonAction ============================================================================
 	
 	public void setBasketPanel(JPanel basketGUI) {
 		this.basketGUI = basketGUI;
