@@ -159,6 +159,7 @@ public class MainGUI extends JFrame {
 				getModel().removeAllElements();
 				getModel().addElement(announce1);
 				getModel().addElement(announce2);
+				getBucketlist().clear();
 				isHome = true;
 			}
 
@@ -301,19 +302,7 @@ public class MainGUI extends JFrame {
 								bucketlist.put(menu_list[menuCat][menuNum], bucketlist.getOrDefault(menu_list[menuCat][menuNum], 0)+nums);
 								sb.append(menu_list[menuCat][menuNum]).append(" : ").append(bucketlist.get(menu_list[menuCat][menuNum])).append(" 개");							
 	
-								if (model.getSize()==0) {
-									model.addElement(sb.toString());
-								} else {
-									for (int k = 0; k < model.getSize(); k++) {
-										if (model.getElementAt(k).contains(menu_list[menuCat][menuNum])) {
-											model.setElementAt(sb.toString(), k);
-											break;
-										} else {
-											model.addElement(sb.toString());
-											break;
-										}
-									}
-								}
+								modelUpdate(menu_list[menuCat][menuNum], sb.toString(), model);
 								
 								jf.setText("0");
 								sb.setLength(0);
@@ -429,6 +418,28 @@ public class MainGUI extends JFrame {
 		
 		// model test&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 		setBucketlist(bucketlist);
+	}
+	// model test&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+	// model에서 중복된 메뉴의 개수를 증가시키고 처리하는 메소드
+	public void modelUpdate(String original, String change, DefaultListModel<String> model) {
+		if (model.getSize()==0) {
+			//System.out.println("model의 크기가 0 이다.");
+			model.addElement(change);
+		} else {
+			for (int k = 0; k < model.getSize(); k++) {
+				//System.out.println("model의 크기 : " + model.getSize());
+				//System.out.println("model의 index : " + k);
+				if (model.getElementAt(k).contains(original)) {
+					//System.out.println("중복된 메뉴가 존재함");
+					model.setElementAt(change, k);
+					break;
+				}
+				if (k == model.getSize()-1) {
+					model.addElement(change);
+				}
+			}
+			
+		}
 	}
 	
 	// 결제창 추가(JPanel creditGUI) ==================================================================================================================================
@@ -722,14 +733,29 @@ public class MainGUI extends JFrame {
 				model.removeAllElements();
 				model.addElement(announce1);
 				model.addElement(announce2);
+				
+				bucketlist.clear();
 			} else if (e.getActionCommand() == "선택한 메뉴 제거") {
 				if (basketList.getSelectedIndex()!=-1) {
 					if (model.getSize()==1) {
 						model.removeAllElements();
 						model.addElement(announce1);
 						model.addElement(announce2);
+						
+						bucketlist.clear();
 					} else if (model.getSize()>1) {
-						model.remove(basketList.getSelectedIndex());
+						int index = basketList.getSelectedIndex();					
+						String str = model.getElementAt(index);
+						
+						for (int i = 0; i < str.length()-1; i++) {
+							if(str.charAt(i)==' ' && str.charAt(i+1)==':') {
+								str = str.substring(0, i);
+								System.out.println(str);
+								break;
+							}
+						}
+						model.remove(index);
+						bucketlist.remove(str);
 					}
 				}
 			}
