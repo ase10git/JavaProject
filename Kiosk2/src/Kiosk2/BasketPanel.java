@@ -21,6 +21,7 @@ public class BasketPanel extends MainGUI2{
 	private DefaultListModel<String> model;
 	private JScrollPane basketPane;
 		
+	/*
 	public BasketPanel() {
 		basketGUI = new JPanel(null);
 		basketGUI.setBounds(0, 650, frameWidth, 250);
@@ -184,4 +185,5 @@ public class BasketPanel extends MainGUI2{
 	public DefaultListModel<String> getModel() {
 		return model;
 	}
+	*/
 }

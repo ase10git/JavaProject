@@ -13,6 +13,7 @@ import javax.swing.JPanel;
 
 public class MenuPanel extends MainGUI2{
 	// 메뉴 패널 추가(JPanel menuGUI)
+	/*
 	private JPanel menuGUI;
 	private JPanel[] menu;
 	
@@ -213,5 +214,5 @@ public class MenuPanel extends MainGUI2{
 	public JPanel[] getMenus() {
 		return menu;
 	}
-	
+	*/
 }

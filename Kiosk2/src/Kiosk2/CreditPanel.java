@@ -14,6 +14,7 @@ public class CreditPanel extends MainGUI2{
 	private JPanel creditGUI;
 	private JPanel[] creditMethod;
 	
+	/*
 	public CreditPanel() {
 		
 		creditGUI = new JPanel(null);
@@ -175,4 +176,5 @@ public class CreditPanel extends MainGUI2{
 	public JPanel[] getCreditMethodPanel() {
 		return creditMethod;
 	}
+	*/
 }
