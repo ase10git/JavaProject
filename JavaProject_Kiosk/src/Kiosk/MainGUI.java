@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.util.HashMap;
 
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
@@ -58,6 +59,8 @@ public class MainGUI extends JFrame {
 	private JPanel orderEndGUI;
 	private JList<String> basketList;
 	private DefaultListModel<String> model;
+	//DefaultListModel<HashMap<String, Integer>> modeltest;
+	HashMap<String, Integer> bucketlist;
 	private JScrollPane basketPane;
 	
 	// 메인 프레임 생성
@@ -294,9 +297,24 @@ public class MainGUI extends JFrame {
 													||model.getElementAt(model.getSize()-1).contains(prevStr2));
 							if (nums != 0) {
 								if (prevStrRemain) model.removeAllElements();
-							
-								sb.append(menu_list[menuCat][menuNum]).append(" : ").append(jf.getText()).append(" 개");
-								model.addElement(sb.toString());
+								// modeltest&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+								bucketlist.put(menu_list[menuCat][menuNum], bucketlist.getOrDefault(menu_list[menuCat][menuNum], 0)+nums);
+								sb.append(menu_list[menuCat][menuNum]).append(" : ").append(bucketlist.get(menu_list[menuCat][menuNum])).append(" 개");							
+	
+								if (model.getSize()==0) {
+									model.addElement(sb.toString());
+								} else {
+									for (int k = 0; k < model.getSize(); k++) {
+										if (model.getElementAt(k).contains(menu_list[menuCat][menuNum])) {
+											model.setElementAt(sb.toString(), k);
+											break;
+										} else {
+											model.addElement(sb.toString());
+											break;
+										}
+									}
+								}
+								
 								jf.setText("0");
 								sb.setLength(0);
 							}
@@ -389,6 +407,9 @@ public class MainGUI extends JFrame {
 		model = new DefaultListModel<String>();
 		model.addElement(announce1);
 		model.addElement(announce2);
+				
+		// model test&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+		HashMap<String, Integer> bucketlist = new HashMap<>();
 		
 		basketList = new JList<String>(model);
 		basketList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -397,6 +418,7 @@ public class MainGUI extends JFrame {
 		// 가격 텍스트창 객체용 ScrollPane 생성
 		int v = ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED;
 		int h = ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED;
+		//JScrollPane basketPane = new JScrollPane(basketList, v, h);
 		JScrollPane basketPane = new JScrollPane(basketList, v, h);
 		basketPane.setBounds(10, 50, 580, 150);
 		
@@ -404,6 +426,9 @@ public class MainGUI extends JFrame {
 		setBasketList(basketList);
 		setModel(model);
 		setBasketPane(basketPane);
+		
+		// model test&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+		setBucketlist(bucketlist);
 	}
 	
 	// 결제창 추가(JPanel creditGUI) ==================================================================================================================================
@@ -906,7 +931,17 @@ public class MainGUI extends JFrame {
 	public JScrollPane getBasketPane() {
 		return basketPane;
 	}
+	/*
+	public void setBasketList(JList<String> basketList) {
+		this.basketList = basketList;
+	}
 	
+	public JList<String> setBasketList() {
+		return basketList;
+	}
+	*/
+	
+	// modeltest&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 	public void setBasketList(JList<String> basketList) {
 		this.basketList = basketList;
 	}
@@ -925,6 +960,14 @@ public class MainGUI extends JFrame {
 
 	// end setter getter ======================================================
 	
+	public HashMap<String, Integer> getBucketlist() {
+		return bucketlist;
+	}
+
+	public void setBucketlist(HashMap<String, Integer> bucketlist) {
+		this.bucketlist = bucketlist;
+	}
+
 	// 데이터 호출하기
 	// 총 가격 가져오기
 	public void getTotalPrice() {
