@@ -1,4 +1,4 @@
-package kiosk;
+package javakiosk;
 
 import java.awt.BorderLayout;
 import java.awt.Button;
@@ -42,6 +42,9 @@ public class MainGUI extends JFrame {
 	String announce1 = "원하시는 음식의 수량을 [+](더하기) 버튼으로 추가 후, [확인] 버튼을 눌러주세요.";
 	String announce2 = "메뉴를 제거하려면 제거할 메뉴를 선택하고, [선택한 메뉴 제거] 버튼을 눌러주세요.";
 	String payment = "";
+	
+	
+	
 	boolean paymentEnd = false;
 	boolean isHome = false;
 	boolean isCredit = false;
@@ -218,6 +221,9 @@ public class MainGUI extends JFrame {
 				{8000,8000,7500,3000,11000,10000}					// 양식 가격
 		};
 		
+		
+		addBasketPanel();
+		basketGUI = getBasketPanel();
 		// 메뉴 카테고리별 패널 설정
 		for (int i = 0; i < menu.length; i++) {
 			menu[i] = new JPanel(null);
@@ -227,11 +233,19 @@ public class MainGUI extends JFrame {
 			Button minus[] = new Button[menu_list[i].length];
 			Button plus[] = new Button[menu_list[i].length];
 			JButton ok[] = new JButton[menu_list[i].length];
-						
+			TextField totalNum = new TextField("0");
+			
 			// 메뉴 카테고리별 버튼 추가
 			for (int j = 0; j < menu_list[i].length; j++) {
 				bt[j] = new JButton(new ImageIcon(imageAddr+menu_list[i][j]+".jpg"));
-			
+				
+				
+				totalNum.setBackground(background);
+				totalNum.setBounds(470,10,80,30);
+				totalNum.setFont(kfont);
+				totalNum.setEditable(false);
+				basketGUI.add(totalNum);
+				
 				if (j<5) {
 					bt[j].setBounds(25+j*150,70,130,130);
 				} else if(j<10) {
@@ -275,12 +289,15 @@ public class MainGUI extends JFrame {
 				menu[i].add(snackName[j]);
 				menu[i].add(num[j]);
 				
+				
 				int menuNum = j; int menuCat = i;
 				// "+", "-", "확인" 버튼 액션 리스너
 				ActionListener plusMinusAction = new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
 						TextField jf = num[menuNum];
+						TextField jtotal = totalNum;
+						
 						int nums = Integer.parseInt(jf.getText());// 중복 메뉴의 수량 추가
 						StringBuilder sb = new StringBuilder();
 						int cnt = 0;
@@ -303,11 +320,25 @@ public class MainGUI extends JFrame {
 								sb.append(menu_list[menuCat][menuNum]).append(" : ").append(jf.getText()).append(" 개");
 								model.addElement(sb.toString());
 								
-								total.cal(menu_price, menuCat, menuNum, cnt);
-								total.calMenu(menu_price[menuCat][menuNum], cnt);
+								int num = Integer.parseInt(jf.getText());
+								
+								
+								total.cal(menu_price[menuCat][menuNum], num);
+								total.calMenu(menu_price[menuCat][menuNum], num);
+								String total_price = Integer.toString(total.getTotal());
+								System.out.println(total_price);
+								jtotal.setText(total_price);
+								addTotalPanel(total_price);
+							//	Totaltext(total_price);
 								jf.setText("0");
 								sb.setLength(0);
+			
 							}
+							
+							
+							
+							//addTotalPanel();
+							//addBasketPanel();
 						}
 						
 						
@@ -334,9 +365,22 @@ public class MainGUI extends JFrame {
 		}
 		
 		// 저장된 메뉴 패널 배열 반환 및 객체 저장
+		setBasket(basketGUI);
 		setMenus(menu);
 		return menu;
 	} // end addMenus ==================================================================================================================================
+	
+	public void Totaltext(String total) {
+		TextField totalNum = new TextField();
+		totalNum.setBackground(background);
+		totalNum.setText(total);
+		totalNum.setBounds(470,10,80,30);
+		totalNum.setFont(kfont);
+		totalNum.setEditable(false);
+		
+		basketGUI.add(totalNum);
+	}
+	
 	
 	// 장바구니 패널 추가(JPanel basketGUI) 
 	public void addBasketPanel() {
@@ -356,6 +400,7 @@ public class MainGUI extends JFrame {
 		addBasketList();
 		
 		// 총 합 텍스트
+		/*
 		JLabel totalPrice = new JLabel();
 		String total_price = Integer.toString(total.getTotal());
 		
@@ -365,6 +410,8 @@ public class MainGUI extends JFrame {
 		totalPrice.setHorizontalTextPosition(JLabel.RIGHT);
 		totalPrice.setText(disp[0]+disp[1]+disp[2]);
 		totalPrice.setBounds(430, 0, 200, 50);
+		*/
+		
 		
 		// 버튼 추가
 		JButton[] basketbt = new JButton[4];
@@ -389,15 +436,60 @@ public class MainGUI extends JFrame {
 			basketGUI.add(basketbt[i]);
 		}
 		
+		addTotalPanel("0");
+		
 		// 객체들을 basketGUI에 추가
 		basketGUI.add(basketTitle);
 		basketGUI.add(getBasketPane());
-		basketGUI.add(totalPrice);
+	//	basketGUI.add(addTotalPanel());
 	
 		// 장바구니 객체 추가
 		add(basketGUI);	
 		setBasketPanel(basketGUI);
 	} // end addBasketGUI 
+	
+	public void addTotalPanel(String total_price) {
+		JLabel totalPrice = new JLabel();
+		JLabel won = new JLabel();
+		
+		TextField totalNum = new TextField(total_price);
+		
+		
+		totalNum.setBackground(background);
+		
+		totalNum.setBounds(470,10,80,30);
+		totalNum.setFont(kfont);
+		totalNum.setEditable(true);
+		
+		
+		
+		totalPrice.setFont(kfont);
+		totalPrice.setHorizontalTextPosition(JLabel.RIGHT);
+		totalPrice.setText("총 합 : ");
+		totalPrice.setBounds(410, 0, 60, 50);
+		
+		won.setFont(kfont);
+		
+		won.setText("원");
+		won.setBounds(560, 0, 20, 50);
+		
+		//basketGUI.add(totalNum);
+		basketGUI.add(totalPrice);
+		basketGUI.add(won);
+	}
+	
+	public void addTotaltext(String total_price) {
+		TextField totalNum = new TextField(total_price);
+		
+		
+		totalNum.setBackground(background);
+		
+		totalNum.setBounds(470,10,80,30);
+		totalNum.setFont(kfont);
+		totalNum.setEditable(true);
+		
+		basketGUI.add(totalNum);
+	}
 		
 	public void addBasketList() {	
 		model = new DefaultListModel<String>();
@@ -711,13 +803,15 @@ public class MainGUI extends JFrame {
 				model.removeAllElements();
 				model.addElement(announce1);
 				model.addElement(announce2);
+				total.all();
 			} else if (e.getActionCommand() == "선택한 메뉴 제거") {
 				if (basketList.getSelectedIndex()!=-1) {
 					if (model.getSize()==1) {
 						model.removeAllElements();
 						model.addElement(announce1);
 						model.addElement(announce2);
-					} else if (model.getSize()>1) {
+					}
+					else if (model.getSize()>1) {
 						model.remove(basketList.getSelectedIndex());
 					}
 				}
@@ -875,6 +969,10 @@ public class MainGUI extends JFrame {
 	
 	public void setMenus(JPanel[] menu) {
 		this.menu = menu;
+	}
+	
+	public void setBasket(JPanel basketGUI) {
+		this.basketGUI = basketGUI;
 	}
 	
 	public JPanel[] getMenus() {
