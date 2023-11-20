@@ -11,6 +11,7 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.util.HashMap;
 
+import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -31,9 +32,9 @@ public class MainGUI extends JFrame {
 	private static final long serialVersionUID = 1L;
 	static final int frameWidth = 800;
 	static final int frameHeight = 900;
-	static Font bfont = new Font("", Font.PLAIN, 25);
-	static Font kfont = new Font("", Font.PLAIN, 18);
-	static Font mfont = new Font("", Font.PLAIN, 16);
+	static Font bfont = new Font("", Font.BOLD, 25);
+	static Font kfont = new Font("", Font.BOLD, 18);
+	static Font mfont = new Font("", Font.BOLD, 16);
 	
 	int numOfMenu = 4;
 	int numOfPayment = 4;
@@ -59,8 +60,7 @@ public class MainGUI extends JFrame {
 	private JPanel orderEndGUI;
 	private JList<String> basketList;
 	private DefaultListModel<String> model;
-	//DefaultListModel<HashMap<String, Integer>> modeltest;
-	HashMap<String, Integer> bucketlist;
+	private HashMap<String, Integer> bucketlist;
 	private JScrollPane basketPane;
 	
 	// 메인 프레임 생성
@@ -76,7 +76,7 @@ public class MainGUI extends JFrame {
 		mainTitle.setVisible(true);
 		
 		JLabel titleName = new JLabel("<html><body style='text-align: center'>부평 휴게소<br>부평 휴게소에 온 것을 환영합니다!</html>");
-		titleName.setSize(200, 100);
+		titleName.setSize(300, 100);
 		titleName.setFont(bfont);
 		titleName.setHorizontalAlignment(JLabel.CENTER);
 		titleName.setHorizontalTextPosition(JLabel.CENTER);
@@ -123,7 +123,7 @@ public class MainGUI extends JFrame {
 		
 		// 버튼 및 안내 문구 추가
 		JLabel info = new JLabel("매장 이용 방법을 선택해주세요.");
-		info.setBounds(frameWidth/2-350/2, 350, 350, 100);
+		info.setBounds(frameWidth/2-400/2, 350, 400, 100);
 		info.setFont(bfont);
 		info.setHorizontalAlignment(JLabel.CENTER);
 		info.setHorizontalTextPosition(JLabel.CENTER);
@@ -159,7 +159,9 @@ public class MainGUI extends JFrame {
 				getModel().removeAllElements();
 				getModel().addElement(announce1);
 				getModel().addElement(announce2);
+				
 				getBucketlist().clear();
+				
 				isHome = true;
 			}
 
@@ -178,20 +180,18 @@ public class MainGUI extends JFrame {
 		menuGUI.setBackground(background);
 		menuGUI.setVisible(false);
 		
+		// 메뉴 화면들 추가
+		addMenus();
+		
 		// 메뉴 버튼 추가
 		JButton[] menubt = new JButton[numOfMenu];
 		String[] name = {"분식", "일식", "한식", "양식"};
 		for (int i = 0; i < name.length; i++) {
 			menubt[i] = new JButton(name[i]);
-		}
-		
-		// 메뉴 화면들 추가
-		addMenus();
-		
-		// 버튼 설정 및 버튼 추가
-		for (int i = 0; i < menubt.length; i++) {
+			menubt[i].setBackground(background);
+			menubt[i].setBorderPainted(false);
 			menubt[i].setBounds(i*100, 0, 100, 100);
-			menubt[i].setFont(kfont);
+			menubt[i].setFont(bfont);
 			menuGUI.add(menubt[i]);
 			menubt[i].addActionListener(menuButtonAction);
 		}	
@@ -205,6 +205,7 @@ public class MainGUI extends JFrame {
 	public JPanel[] addMenus() { 
 		
 		JPanel[] menu = new JPanel[numOfMenu];
+		
 		String[][] menu_list = {
 				{"김밥","참치김밥","치즈김밥","쫄면","떡볶이","로제 떡볶이","순대","핫도그","라면","오뎅탕"},   // 분식
 				{"모듬초밥","우동","돈까스","치즈돈까스","모밀","덴푸라","돈코츠라멘","에비동","차슈동"},		// 일식
@@ -222,6 +223,7 @@ public class MainGUI extends JFrame {
 		// 메뉴 카테고리별 패널 설정
 		for (int i = 0; i < menu.length; i++) {
 			menu[i] = new JPanel(null);
+			menu[i].setBorder(BorderFactory.createLineBorder(Color.black));
 			JButton[] bt = new JButton[menu_list[i].length];
 			TextField num[] = new TextField[menu_list[i].length];
 			JLabel snackName[] = new JLabel[menu_list[i].length];
@@ -322,7 +324,7 @@ public class MainGUI extends JFrame {
 			}
 			
 			menu[i].setBounds(0, 100, 800, 700);
-			menu[i].setBackground(Color.LIGHT_GRAY);
+			menu[i].setBackground(background); //Color.LIGHT_GRAY
 			if (i==0) menu[i].setVisible(true);
 			else menu[i].setVisible(false);
 		
@@ -453,7 +455,7 @@ public class MainGUI extends JFrame {
 		// 결제방법 안내 추가
 		JLabel paymentMethod = new JLabel("결제 방법을 선택해주세요.");
 		paymentMethod.setFont(bfont);
-		paymentMethod.setBounds(frameWidth/2-150, 250, 300, 50);
+		paymentMethod.setBounds(frameWidth/2-350/2, 250, 350, 50);
 		paymentMethod.setHorizontalAlignment(JLabel.CENTER);
 		
 		// 뒤로 가기 버튼 추가 => 메뉴 선택으로 돌아감
@@ -643,9 +645,9 @@ public class MainGUI extends JFrame {
 	private void addOrderEndComponentLS() {
 		orderEndGUI.addComponentListener(new ComponentAdapter() {
 		@Override
-		public void componentShown(ComponentEvent e) {
-			isOrderEnd = true;
-		}
+			public void componentShown(ComponentEvent e) {
+				isOrderEnd = true;
+			}
 		@Override
 			public void componentHidden(ComponentEvent e) {
 				isOrderEnd = false;
@@ -710,16 +712,10 @@ public class MainGUI extends JFrame {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (e.getActionCommand() == "처음으로 돌아가기") {
-				mainTitle.setVisible(true);
-				menuGUI.setVisible(false);
-				basketGUI.setVisible(false);
+				returnToHome();
 				if (creditGUI!=null) creditGUI.setVisible(false);
-				takeOutOrEat.setVisible(true);
-				
-				model.removeAllElements();
-				model.addElement(announce1);
-				model.addElement(announce2);
-				
+				mainTitle.setVisible(true);
+
 			} else if (e.getActionCommand() == "결제") {
 				if (creditGUI==null) addCreditPanel(); // 버튼 눌렀을 때 creditGUI 생성
 				model = getModel();
@@ -869,20 +865,17 @@ public class MainGUI extends JFrame {
 		}
 	}; //end paybtActionListener =================================================================================
 	
-	// 결제 후 처음 화면으로 돌아가기
+	// 처음 화면으로 돌아가기
 	public void returnToHome() {
+		// home에서 매장 이용 방법 패널 소환
+		// 매장 이용 방법 패널 소환 시 자동으로 메뉴를 저장해둔 데이터들 리셋
 		takeOutOrEat.setVisible(true);
-		menuGUI.setVisible(false);
-		creditGUI.setVisible(false);
-		basketGUI.setVisible(false);
-		orderEndGUI.setVisible(false);
 		
-		/*
-		// 저장되었던 메뉴 객체 및 가격 리셋
-		getModel().removeAllElements();
-		getModel().addElement(announce1);
-		getModel().addElement(announce2);
-		*/
+		// 다른 패널 숨기기
+		menuGUI.setVisible(false);
+		if (creditGUI!=null) creditGUI.setVisible(false);
+		basketGUI.setVisible(false);
+		if (orderEndGUI!=null) orderEndGUI.setVisible(false);
 	}
 	
 	// 패널 객체 저장 및 불러오기 =======================================================
