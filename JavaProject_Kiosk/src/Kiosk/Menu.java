@@ -1,5 +1,6 @@
 package Kiosk;
 
+
 public class Menu {
 	
 	private int price;
@@ -11,4 +12,3 @@ public class Menu {
 		return price;
 	}
 }
-
