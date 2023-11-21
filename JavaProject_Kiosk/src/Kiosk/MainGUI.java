@@ -1,6 +1,5 @@
 package Kiosk;
 
-import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Button;
 import java.awt.Color;
@@ -164,7 +163,6 @@ public class MainGUI extends JFrame {
 		
 		// ComponentListener 추가
 		takeOrEatComponentLS();
-
 	} // end addTakeOrEatPanel *************************************************************************************************************************
 	
 	// 매장이용 버튼 액션 추가 
@@ -605,15 +603,12 @@ public class MainGUI extends JFrame {
 				// 저장해둔 메뉴 제거
 				bucketlist.clear();
 				// 저장해둔 총 합 제거
-				total.setTotal(0);
-				
+				total.setTotal(0);				
 			} else if (model.getSize()>1) {
 				// 선택한 위치의 인덱스 가져오기
-				int index = basketList.getSelectedIndex();
-				
+				int index = basketList.getSelectedIndex();				
 				// 선택한 위치의 인덱스에 해당하는 model 내용 가져오기
-				String str = model.getElementAt(index);
-				
+				String str = model.getElementAt(index);				
 				if (!str.contains(announce1) && !str.contains(announce2)) {
 					// model 내용 중 메뉴 이름만 가져오기
 					for (int i = 0; i < str.length()-1; i++) {
@@ -621,11 +616,9 @@ public class MainGUI extends JFrame {
 							str = str.substring(0, i);
 							break;
 						}
-					}	
-				
+					}				
 					// 선택한 메뉴의 가격을 뺀 새 총 합 구하기				
-					int newTotal = total.getTotal() - bucketlist.get(str)*menuAndPrice.get(str); // menuAndPrice는 Food_Data에서 가져옴
-				
+					int newTotal = total.getTotal() - bucketlist.get(str)*menuAndPrice.get(str); // menuAndPrice는 Food_Data에서 가져옴			
 					// 선택한 위치의 model 내용 삭제하고, 저장해둔 메뉴와 개수 제거하기
 					model.remove(index);				
 					bucketlist.remove(str);

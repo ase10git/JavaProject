@@ -1,0 +1,23 @@
+flowchart code
+
+flowchart TD
+    AA[[<span style="color:cyan;">class Main</span>]] -->|<span style="color:yellow;">main</span>| A
+    A[[<span style="color:cyan;">class MainGUI</span>]] -->|<span style="color:yellow;">MainGUI 생성자</span>| Z(MainGUI)
+    A --> AB(<span style="color:cyan;">Food_Data </span><span style="color:orange;">food</span>)
+    A --> AC(<span style="color:cyan;">Total </span><span style="color:orange;">total</span>)
+    ABA[[<span style="color:cyan;">class Food_Data</span><span style="color:orange;"></span>]] --> AB
+    ABB[[<span style="color:cyan;">class Total</span><span style="color:orange;"></span>]] --> AC
+    Z --> B(<span style="color:cyan;">JPanel </span><span style="color:orange;">mainTitle</span>)
+    Z --> |<span style="color:yellow;">addTakeOrEatPanel</span>| C(<span style="color:cyan;">JPanel </span><span style="color:orange;">takeOrEat</span>)
+    Z --> |<span style="color:yellow;">addMenuPanel</span>| D(<span style="color:cyan;">JPanel </span><span style="color:orange;">menuGUI</span>)
+    D --> |<span style="color:yellow;">addBasket</span>| E[Basket Objects]
+    E --> F(<span style="color:cyan;">JList  </span><span style="color:orange;">basketList</span>)
+    E --> G(<span style="color:cyan;">DefaultListModel </span><span style="color:orange;">model</span>)
+    E --> H(<span style="color:cyan;">HashMap </span><span style="color:orange;">bucketlist</span>)
+    D --> |<span style="color:yellow;">addMenus</span>| I(<span style="color:cyan;">JPanel </span><span style="color:orange;">menu</span>)
+    E --> |<span style="color:yellow;">addCreditPanel</span>| J(<span style="color:cyan;">JPanel </span><span style="color:orange;">creditGUI</span>)
+    J --> |<span style="color:yellow;">addCreditMethodPanel</span>| K( <span style="color:cyan;">JPanel </span></span><span style="color:orange;">creditMethod</span>)
+    J --> |<span style="color:yellow;">addOrderEndPanel</span>| L(<span style="color:cyan;">JPanel </span></span><span style="color:orange;">OrderEndPanel</span>)
+
+markdown
+[![](https://mermaid.ink/img/pako:eNqtlltu2kAUhrcymiciATXYwsZNkQCTCw2iUukLGFUn9hAoxoPGY7WU8NQsIBto99B9sYiOLyE1Qc4Q4Sdsn_m_b46PLdbYoS7BJp549LszBcbRwLJ9JI5mczQ6D5bgo4CvPPLBFqUeZaazAv-9jRuOB0GAejDzz99FZY3xGJVKjftDa1bEE_nRqsVz_T1qpiRZ0OWX62NY6RK0_fV7-_B3--dxBx4W0ntnqUGUhpqtQp7HBaXuVws4oDTnUDFl4N-RqHwiytPCLKWdSxlQDp4cgUele4iWVDN3W5HiZHouEE-olgxq8J_kUZh2ghnGZ_lPpvsJfCLZtGgABzPukWzjEswrAwWuO4A56bMO8Bi5G6j2yfz4E-Btfj3ih1k163StE9nPr2AqZkmKtSCYE76z6oySC6h_-404PBgnaZ047SJf-WYWcCSnfBtDogVZ64RzmcuxyARCL17cEx9J2SZFpYdgV7mwKwimPVhK7ip0xK68F7uyjhiSYPcork86IIe2_rpRmxF3tvdOdU_m5cTpL0a3e5Rcj_ApdbOKHwvoCEd51YT1Nts-cwnr-HumN4UTix7CnOEiXhAmPrGu-EuxjrxtzKdkQWxsip8usLmNbX8j6iDk9PPKd7DJWUiKOFy6wIk1gzsGC2xOwAvEVZGKzTX-gc2SXtYMVVV1vaLUdNVQjCJeYVOrqGWtrmtVpabUtKqubYr4J6UioVJW1EpdM_S6pivVuqHV4rhhfDOO3_wDpdQJLA?type=png)](https://mermaid.live/edit#pako:eNqtlltu2kAUhrcymiciATXYwsZNkQCTCw2iUukLGFUn9hAoxoPGY7WU8NQsIBto99B9sYiOLyE1Qc4Q4Sdsn_m_b46PLdbYoS7BJp549LszBcbRwLJ9JI5mczQ6D5bgo4CvPPLBFqUeZaazAv-9jRuOB0GAejDzz99FZY3xGJVKjftDa1bEE_nRqsVz_T1qpiRZ0OWX62NY6RK0_fV7-_B3--dxBx4W0ntnqUGUhpqtQp7HBaXuVws4oDTnUDFl4N-RqHwiytPCLKWdSxlQDp4cgUele4iWVDN3W5HiZHouEE-olgxq8J_kUZh2ghnGZ_lPpvsJfCLZtGgABzPukWzjEswrAwWuO4A56bMO8Bi5G6j2yfz4E-Btfj3ih1k163StE9nPr2AqZkmKtSCYE76z6oySC6h_-404PBgnaZ047SJf-WYWcCSnfBtDogVZ64RzmcuxyARCL17cEx9J2SZFpYdgV7mwKwimPVhK7ip0xK68F7uyjhiSYPcork86IIe2_rpRmxF3tvdOdU_m5cTpL0a3e5Rcj_ApdbOKHwvoCEd51YT1Nts-cwnr-HumN4UTix7CnOEiXhAmPrGu-EuxjrxtzKdkQWxsip8usLmNbX8j6iDk9PPKd7DJWUiKOFy6wIk1gzsGC2xOwAvEVZGKzTX-gc2SXtYMVVV1vaLUdNVQjCJeYVOrqGWtrmtVpabUtKqubYr4J6UioVJW1EpdM_S6pivVuqHV4rhhfDOO3_wDpdQJLA)

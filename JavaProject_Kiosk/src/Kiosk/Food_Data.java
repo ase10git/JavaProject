@@ -57,5 +57,4 @@ public class Food_Data {
 	public void setMenuAndPrice(HashMap<String, Integer> menuAndPrice) {
 		this.menuAndPrice = menuAndPrice;
 	}
-
 }

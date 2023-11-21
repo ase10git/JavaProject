@@ -1,6 +1,5 @@
 package Kiosk;
 
-
 public class Total {
 	int total = 0;
 	int menu = 0;
