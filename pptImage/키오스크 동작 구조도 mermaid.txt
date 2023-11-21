@@ -1,0 +1,19 @@
+1. flowchart code
+
+A[[<span style="color:orange;">메인 프레임</span>]] --> B[[<html><body style='text-align: center'>매장 이용 방법 화면<br><span style="color:orange;">takeOrEat</span></html>]]
+B -->|<span style="color:cyan;">포장</span>| C[[<html><body style='text-align: center'>메뉴 선택 화면<br><span style="color:orange;">menuGUI</span></html>]]
+B -->|<span style="color:cyan;">매장에서 식사</span>| C
+    C --> |<span style="color:cyan;">처음으로 돌아가기</span>| B
+C --> |<span style="color:cyan;">분식, 일식, 한식, 양식</span>| D[[<html><body style='text-align: center'>카테고리별 메뉴판<br><span style="color:orange;">menu</span></html>]]
+D --> |<span style="color:cyan;">+, 확인</span>| H([메뉴 추가하기])
+D --> |<span style="color:cyan;">모두 제거, 선택한 메뉴 제거</span>| E([메뉴 삭제하기])
+E --> |<span style="color:cyan;">결제</span>| I[[<html><body style='text-align: center'>결제화면<br><span style="color:orange;">creditGUI</span></html>]]
+H --> |<span style="color:cyan;">결제</span>| I
+I --> |<span style="color:cyan;">카드, 현금, 페이앱, 기프트카드/쿠폰</span>| J[[<html><body style='text-align: center'>결제 진행 화면<br><span style="color:orange;">creditMethod</span></html>]]
+    I --> |<span style="color:cyan;">뒤로 돌아가기</span>| C
+J --> |<span style="color:yellow;"><html><body style='text-align: center'>3초 지연<br>결제 임의 구현</span></html>| K[[<html><body style='text-align: center'>결제 완료 화면<br><span style="color:orange;">orderEndGUI</span></html>]]
+    K --> |<span style="color:cyan;">처음으로 돌아가기</span>| B
+
+
+2. markdown
+[![](https://mermaid.ink/img/pako:eNqtlV1PE0EUhv_KZG_Q2KYX3tXaRGgjHzFeqDeyvRi6A23YnSXTabQBEoJLAtpY0BZasyU1olhTkwKVlITE_7Mz-x88288YCmyNezP7Mec973nmzOyqkjQ1ooSVRd18lUxhxtHzmEofzc9HMiuYogzP6eShCrN0k4VNhukSeaAqUVEvymobuUVL1LbloRUJedOjiQQKBqNoEsJT3NCjkQVTy_VEJjh5zYNYTy_RMEoSygmbiIrjI3n4FclqS36qI9Gsi9MScitFUW9FFlj0ZhMcL5OnLI55L3sk1EmaSKh00vOxNio8mcPUC3YLDcjci1xDU_4t14tip4WkVXPfVH17NQjNPn4x8y9Ou4zkwa60bCTfVeVmY2hbpQiuqQ72G1XkaVlW89K-FJ9tJAp5WbKc5obTbg60JlXqQ0ecW-AhAEt22Rndkt193t-DcSAW881TXrTcrbxzVhPfGuLMQl2-bn7XH9SrRGO3F3EPfFdK0MEDv9N35vsLe14EMG6pDGwSd33JiR_fxd4ukjXbOWkGeq0BYFBfsvNhkCs-zLX5E74Nc8Vvz-WcNiFkoDXjm3M30G-_JhnR0nxkx06Pb1KlMz469KIlPtqwMmXLaW_D-L7snQulkwACPHDUuG_b3Tkh-bvmFoZAZ8eEgOSx5e7voPFgPCE8ZWpXeXgb0Ed54sPRtVsPtvHs9Qo5osPp7Gn4rPK-bG1DjRvyoOkV1y_60JLVMnJ-NYDw32WsobmxEVYs8SXvG6HJNMLiVBvZUR7Buf90hCkBxSDMwGkN_mqrnraq8BQxiKqE4VbDbFlVVLoO83CWm89yNKmEOcuSgJJd0TAnsTReYthQwotYz8BbUH5pmv3n9T_-nAU5?type=png)](https://mermaid.live/edit#pako:eNqtlV1PE0EUhv_KZG_Q2KYX3tXaRGgjHzFeqDeyvRi6A23YnSXTabQBEoJLAtpY0BZasyU1olhTkwKVlITE_7Mz-x88288YCmyNezP7Mec973nmzOyqkjQ1ooSVRd18lUxhxtHzmEofzc9HMiuYogzP6eShCrN0k4VNhukSeaAqUVEvymobuUVL1LbloRUJedOjiQQKBqNoEsJT3NCjkQVTy_VEJjh5zYNYTy_RMEoSygmbiIrjI3n4FclqS36qI9Gsi9MScitFUW9FFlj0ZhMcL5OnLI55L3sk1EmaSKh00vOxNio8mcPUC3YLDcjci1xDU_4t14tip4WkVXPfVH17NQjNPn4x8y9Ou4zkwa60bCTfVeVmY2hbpQiuqQ72G1XkaVlW89K-FJ9tJAp5WbKc5obTbg60JlXqQ0ecW-AhAEt22Rndkt193t-DcSAW881TXrTcrbxzVhPfGuLMQl2-bn7XH9SrRGO3F3EPfFdK0MEDv9N35vsLe14EMG6pDGwSd33JiR_fxd4ukjXbOWkGeq0BYFBfsvNhkCs-zLX5E74Nc8Vvz-WcNiFkoDXjm3M30G-_JhnR0nxkx06Pb1KlMz469KIlPtqwMmXLaW_D-L7snQulkwACPHDUuG_b3Tkh-bvmFoZAZ8eEgOSx5e7voPFgPCE8ZWpXeXgb0Ed54sPRtVsPtvHs9Qo5osPp7Gn4rPK-bG1DjRvyoOkV1y_60JLVMnJ-NYDw32WsobmxEVYs8SXvG6HJNMLiVBvZUR7Buf90hCkBxSDMwGkN_mqrnraq8BQxiKqE4VbDbFlVVLoO83CWm89yNKmEOcuSgJJd0TAnsTReYthQwotYz8BbUH5pmv3n9T_-nAU5)

@@ -1,0 +1,18 @@
+flowchart code
+
+flowchart TD
+    A[[<span style="color:cyan;">class MainGUI</span>]] -->|<span style="color:yellow;">MainGUI 생성자</span>| Z(MainGUI)
+    Z --> B(<span style="color:cyan;">JPanel </span><span style="color:orange;">mainTitle</span>)
+    Z --> |<span style="color:yellow;">addTakeOrEatPanel</span>| C(<span style="color:cyan;">JPanel </span><span style="color:orange;">takeOrEat</span>)
+    Z --> |<span style="color:yellow;">addMenuPanel</span>| D(<span style="color:cyan;">JPanel </span><span style="color:orange;">menuGUI</span>)
+    D --> |<span style="color:yellow;">addBasket</span>| E[Basket Objects]
+    E --> F(<span style="color:cyan;">JList  </span><span style="color:orange;">basketList</span>)
+    E --> G(<span style="color:cyan;">DefaultListModel </span><span style="color:orange;">model</span>)
+    E --> H(<span style="color:cyan;">HashMap </span><span style="color:orange;">bucketlist</span>)
+    D --> |<span style="color:yellow;">addMenus</span>| I(<span style="color:cyan;">JPanel </span><span style="color:orange;">menu</span>)
+    E --> |<span style="color:yellow;">addCreditPanel</span>| J(<span style="color:cyan;">JPanel </span><span style="color:orange;">creditGUI</span>)
+    J --> |<span style="color:yellow;">addCreditMethodPanel</span>| K( <span style="color:cyan;">JPanel </span></span><span style="color:orange;">creditMethod</span>)
+    J --> |<span style="color:yellow;">addOrderEndPanel</span>| L(<span style="color:cyan;">JPanel </span></span><span style="color:orange;">OrderEndPanel</span>)
+
+markdown
+[![](https://mermaid.ink/img/pako:eNqtlV1u2kAUhbcymiciATXYwsZNkZqYJqGxqFT6Aubhxh6CyzBGM2O1LuGpXUA30O6h-2IRHf-UisQiJsJP1sy553x3fuw19qOAYBvPaPTFnwOXaOR4DKnn7WRyLlbAkJAJJW88paQRt_0E2GsP93wKQiAXQnb16eb8VarsTaeo0eg9lJUlhKqEtLAoQdvvv7Y__mx__yyKH9C4Vsyd5QTj1A1d1A5hDD4AIxQVHmXKiAO7J6l2qdxHoaSkUO_FPEMNQTCCBRnyPsgsckd9eTI--S_gZXwuYfE-mnO6pVPe__e5AHMqgl2AWBC5o-pP8gE0vPtMfCmmuVs_c3t3GPk2FBJVQ77LQtKCfeo85-pgjkNmENOs2FX3o-oipdKysOuDYdcg5i6sKnYV-6or-qQr54hDInZbcXPSA1LW-vNEl5wE4aM7NTgZl5-5Pzm6g6PgXCLnUbCP-L6GjmCsjppnvYx2yAPC--wR6W3txKBlMWe4jpeEq09soP4m65Tbw3JOlsTDtnoNgC887LGN0kEso48J87EteUzqOF4FIIkTwj2HJbZnQIUaVa7YXuOv2G6YTcPSdd00W1rH1C3NquME20ZLbxpd02hrHa1jtE1jU8ffokg5tJqa3uoaltk1TK3dtYxOZjfOJjP7zV8cZlu2?type=png)](https://mermaid.live/edit#pako:eNqtlV1u2kAUhbcymiciATXYwsZNkZqYJqGxqFT6Aubhxh6CyzBGM2O1LuGpXUA30O6h-2IRHf-UisQiJsJP1sy553x3fuw19qOAYBvPaPTFnwOXaOR4DKnn7WRyLlbAkJAJJW88paQRt_0E2GsP93wKQiAXQnb16eb8VarsTaeo0eg9lJUlhKqEtLAoQdvvv7Y__mx__yyKH9C4Vsyd5QTj1A1d1A5hDD4AIxQVHmXKiAO7J6l2qdxHoaSkUO_FPEMNQTCCBRnyPsgsckd9eTI--S_gZXwuYfE-mnO6pVPe__e5AHMqgl2AWBC5o-pP8gE0vPtMfCmmuVs_c3t3GPk2FBJVQ77LQtKCfeo85-pgjkNmENOs2FX3o-oipdKysOuDYdcg5i6sKnYV-6or-qQr54hDInZbcXPSA1LW-vNEl5wE4aM7NTgZl5-5Pzm6g6PgXCLnUbCP-L6GjmCsjppnvYx2yAPC--wR6W3txKBlMWe4jpeEq09soP4m65Tbw3JOlsTDtnoNgC887LGN0kEso48J87EteUzqOF4FIIkTwj2HJbZnQIUaVa7YXuOv2G6YTcPSdd00W1rH1C3NquME20ZLbxpd02hrHa1jtE1jU8ffokg5tJqa3uoaltk1TK3dtYxOZjfOJjP7zV8cZlu2)
