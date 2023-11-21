@@ -321,8 +321,8 @@ public class MainGUI extends JFrame {
 				// 음식 이름과 가격 표시
 				String snackNamePrice = "<html><body style='text-align: center'>"+menu_list[i][j]+"<br>"+menu_price[i][j]+" 원</html>";
 				snackName[j] = new JLabel(snackNamePrice);
-					int namepos = bt[j].getX() + (bt[j].getWidth())/2 - 145/2;
-				snackName[j].setBounds(namepos,bt[j].getY()-50,145,50);
+					int namepos = bt[j].getX() + (bt[j].getWidth())/2 - 150/2;
+				snackName[j].setBounds(namepos,bt[j].getY()-50,150,50);
 				snackName[j].setFont(kfont);
 				snackName[j].setHorizontalAlignment(JLabel.CENTER);
 				snackName[j].setHorizontalTextPosition(JLabel.CENTER);
@@ -614,21 +614,23 @@ public class MainGUI extends JFrame {
 				// 선택한 위치의 인덱스에 해당하는 model 내용 가져오기
 				String str = model.getElementAt(index);
 				
-				// model 내용 중 메뉴 이름만 가져오기
-				for (int i = 0; i < str.length()-1; i++) {
-					if(str.charAt(i)==' ' && str.charAt(i+1)==':') {
-						str = str.substring(0, i);
-						break;
-					}
-				}	
+				if (!str.contains(announce1) && !str.contains(announce2)) {
+					// model 내용 중 메뉴 이름만 가져오기
+					for (int i = 0; i < str.length()-1; i++) {
+						if(str.charAt(i)==' ' && str.charAt(i+1)==':') {
+							str = str.substring(0, i);
+							break;
+						}
+					}	
 				
-				// 선택한 메뉴의 가격을 뺀 새 총 합 구하기
-				int newTotal = total.getTotal() - bucketlist.get(str)*menuAndPrice.get(str); // menuAndPrice는 Food_Data에서 가져옴
+					// 선택한 메뉴의 가격을 뺀 새 총 합 구하기				
+					int newTotal = total.getTotal() - bucketlist.get(str)*menuAndPrice.get(str); // menuAndPrice는 Food_Data에서 가져옴
 				
-				// 선택한 위치의 model 내용 삭제하고, 저장해둔 메뉴와 개수 제거하기
-				model.remove(index);				
-				bucketlist.remove(str);
-				total.setTotal(newTotal);
+					// 선택한 위치의 model 내용 삭제하고, 저장해둔 메뉴와 개수 제거하기
+					model.remove(index);				
+					bucketlist.remove(str);
+					total.setTotal(newTotal);
+				}
 			}
 		}
 	} // end removeSelectedMenu()
@@ -801,7 +803,7 @@ public class MainGUI extends JFrame {
 			// 객체들을 결제 방법 별 패널에 추가
 			creditMethod[i].add(a);
 			creditMethod[i].add(creditImage[i]);
-			creditMethod[i].add(backButton(creditMethod[i]));
+			//creditMethod[i].add(backButton(creditMethod[i])); // 버그로 인한 버튼 제거
 			creditMethod[i].revalidate();
 			
 			// 결제 방법 별 패널을 메인 프레임에 추가
@@ -838,6 +840,7 @@ public class MainGUI extends JFrame {
 	
 	// 결제 방법 별 결제창에서 뒤로 가기 버튼 추가
 	// addCreditMethod() 에서 호출
+	/*
 	public JButton backButton(JPanel credit) {
 		// 뒤로 가기 버튼 추가 --> menuGUI 패널(메뉴 선택)로 돌아감
 		JButton back = new JButton("뒤로 돌아가기");
@@ -855,7 +858,7 @@ public class MainGUI extends JFrame {
 		});
 		return back;
 	} // end backButton() 
-	
+	*/
 	//=========================================================================================================================================================================
 	//
 	// 주문 완료 패널 추가
@@ -876,7 +879,7 @@ public class MainGUI extends JFrame {
 		info.setHorizontalTextPosition(JLabel.CENTER);
 
 		// 자동으로 홈(takeOrEat) 돌아가기 카운트 문구 추가
-		JLabel countDown = new JLabel();
+		JLabel countDown = new JLabel(homeCount+"초 뒤 처음 화면으로 돌아갑니다.");
 		countDown.setBounds(frameWidth/2-400/2, 250, 400, 100);
 		countDown.setFont(bfont);
 		countDown.setHorizontalAlignment(JLabel.CENTER);
@@ -907,14 +910,15 @@ public class MainGUI extends JFrame {
 		setOrderEndPanel(orderEndGUI);
 		
 		// ComponentListener 추가
-		addOrderEndComponentLS();
-		
 		// 결제 화면 표시 및 자동 복귀용 ComponentListener와 Timer 추가
-		autoHome(getOrderEndPanel());
+		addOrderEndComponentLS();
+
 	} // end addOrderEndPanel() *************************************************************************************************************************
 	
 	// orderEndGUI 패널이 보이는지 알려줌
 	// startHomeTimer의 홈 타이머를 제어하기 위한 boolean을 설정하는 메소드
+	// 주문 완료 화면이 뜨면 홈으로 자동으로 돌아가기를 실행
+	// 사용자가 버튼을 누르지 않아도 홈으로 돌아가도록 구현
 	// addOrderEndPanel() 에서 호출
 	private void addOrderEndComponentLS() {
 		orderEndGUI.addComponentListener(new ComponentAdapter() {
@@ -922,15 +926,21 @@ public class MainGUI extends JFrame {
 			public void componentShown(ComponentEvent e) {
 			// orderEndGUI 패널이 보이면 알려줌
 				isOrderEnd = true;
+				startHomeTimer(orderEndGUI); // 자동으로 홈 돌아가기 타이머를 실행
 			}
 		@Override
 			public void componentHidden(ComponentEvent e) {
 			// orderEndGUI 패널이 화면에서 안보이면 알려줌
 				isOrderEnd = false;
+				homeCount = 10;
+				
+				// orderEndGUI의 카운트다운 라벨 리셋
+				((JLabel)orderEndGUI.getComponent(1)).setText(homeCount+"초 뒤 처음 화면으로 돌아갑니다."); // 화면에 남은 시간을 표시	
+				setOrderEndPanel(orderEndGUI); // orderEndGUI 패널 갱신
 			}
 		});
 	} // end addOrderEndComponentLS *************************************************************************************************************************
-
+	
 	// 결제 대기 타이머 생성 및 가동
 	// 실제 결제를 진행할 수 없으므로, 결제를 했다는 임의구현으로 3초의 시간이 경과하면 결제 완료 패널을 표시해줌
 	// addCreditMethodComponentLS() 에서 호출
@@ -954,20 +964,7 @@ public class MainGUI extends JFrame {
 		});
 		timer.start(); // 타이머 작동 시작
 	} // end startCreditTimer() *************************************************************************************************************************
-	
-	// 홈 화면 자동으로 돌아가기
-	// 주문 완료 화면이 뜨면 홈으로 자동으로 돌아가기를 실행
-	// 사용자가 버튼을 누르지 않아도 홈으로 돌아가도록 구현
-	// addOrderEndPanel() 에서 호출
-	private void autoHome(JPanel orderEndGUI) {
-		orderEndGUI.addComponentListener(new ComponentAdapter() {		
-			@Override
-			public void componentShown(ComponentEvent e) {
-				startHomeTimer(orderEndGUI); // 자동으로 홈 돌아가기 타이머를 실행
-			}
-		});
-	} // end autoHome
-	
+
 	// 자동 홈 복귀 타이머
 	// autoHome() 에서 호출
 	public void startHomeTimer(JPanel orderEndGUI) {
@@ -976,12 +973,12 @@ public class MainGUI extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				if (!isHome && isOrderEnd) { // 홈 화면(takeOrEat)이 아니고, 주문 완료 패널(orderEndGUI)일 때만 Timer 가동
 					
-					if (homeCount > 0) { // 홈으로 돌아가기 카운트(homeCount)가 0 이상일 때				
+					if (homeCount > 0) { // 홈으로 돌아가기 카운트(homeCount)가 0 이상일 때		
+						homeCount--; // homeCount 다운
 						System.out.println(homeCount+"초 뒤에 홈으로 복귀"); // 타이머 가동 확인용 출력						
 						((JLabel)orderEndGUI.getComponent(1)).setText(homeCount+"초 뒤 처음 화면으로 돌아갑니다."); // 화면에 남은 시간을 표시	
 						setOrderEndPanel(orderEndGUI); // orderEndGUI 패널 갱신
-						homeCount--; // homeCount 다운
-						
+
 					} else if (homeCount == 0) {
 						((Timer) e.getSource()).stop(); // 홈 Timer 종료
 						homeCount = 10; // homeCount 리셋
