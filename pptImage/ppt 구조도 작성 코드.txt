@@ -1,0 +1,71 @@
+- https://mrnoobiest.tistory.com/181
+- https://mermaid.live/edit#pako:eNrNVcFu2zAM_RVBpxZIfyAoCrRNt3WI1wLpTnVRMBaTCLWlQKYPhZd_nyzZllQbRS8D5kusx0eKfCTjlhdaIF_yooS6XknYG6hyxezjEJaBVK0Huqeyx7PzcO7M33_fe-CUK__So-zyz8UFe9IEZRzSAWNMqYhRoFgSlOGGGsnRA7L_gMxf-k1r8boCgvjiEYwK2pCRav_88vzCKlTNaylrClabXDAdjSww2H5AfcjgeJnnPsaC3SvCPZorR79W4jF1sJlnwxWxhgPu4s8YhkizFftykzaExlkoKvXnIygsXQufJJU4sRC84YO5A5r62DTG-AHvlZnQC4NC0ryDt2VIBy0mjtoINHdKpK5rK9go8xXbQv2GtE4atcIdNKUDMzvQZUSvuvOX2rZtChs4nYBxZthOxwm7GYwH9-R_5hZgkNXXuGQgRIoNne33I-W3X-rTGrbWItVOB_C6IKlVpwkqNM7NOt00RFp5WxTAw7ZBPW0bRe-2ME14TCEa1xG71dVRK1S03pyds8_WdJxFZmXpLakYgdFOqqUO_wUVfrji_-nAP1P1s5nr_g_8vvpKu8NMkT2nHVQ78QWv0FjBhf0euJpzTge08vKlfRV-xXKeq44KDenNuyr4kkyDC94cBRD2XxAPnv4CDFH1Bg
+- https://app.code2flow.com/
+classDiagram
+    class Main{
+        main()
+        MainGUI
+    }
+
+    MainGUI <|-- Total
+    class Total{
+      int total
+      cal()
+      setTotal()
+      getTotal()
+    }
+
+    MainGUI <|-- Food_Data
+    class Food_Data{
+        String[][] menu_list
+        int[][] menu_price
+        HashMap<\String, Integer> menuAndPrice
+        getMenu_list()
+        getMenu_price()
+        getMenuAndPrice()
+    }
+
+    Main <|-- MainGUI
+    class MainGUI{
+        JPanel mainTitle
+        JPanel takeOrEat
+        JPanel menuGUI
+        JPanel[] menu
+        JPanel creditGUI
+        JPanel[] creditMethod
+        JPanel orderEndGUI
+        JList<\String> basketList
+        DefaultListModel<\String> model
+        HashMap<\String, Integer> bucketlist
+        Food_Data food
+        Total total
+    }
+    
+    MainGUI <|-- TakeOrEatPanel : addTakeOrEatPanel()
+    class TakeOrEatPanel {
+        JPanel takeOrEat
+        JLabel info
+        ActionListener takeEatButtonAction
+        JButton[] takeEatbt
+        setTakeOrEatPanel(takeOrEat)
+        takeOrEatComponentLS() 
+    }
+
+    MainGUI <|-- mainTitle  : MainGUI()
+    class mainTitle {
+        JLabel titleName
+    }
+
+        MainGUI <|-- TakeOrEatPanel : addTakeOrEatPanel()
+    class TakeOrEatPanel {
+        JPanel takeOrEat
+        JLabel info
+        JButton[] takeEatbt
+        setTakeOrEatPanel(takeOrEat)
+        takeOrEatComponentLS()
+    }
+    
+    MainGUI <-- MenuGUI : addMenuPanel()
+    class MenuGUI{
+
+    }
