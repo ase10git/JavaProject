@@ -8,3 +8,9 @@
 | OS   | Window 11 |
 | 언어 | Java      |
 | IDE  | Eclipse   |
+
+1. JavaProject_Kiosk : 키오스크 소스 코드
+2. Kiosk2 : 코드 정리중인 파일들
+3. pptImage : 발표 자료용 이미지
+4. kioskProject : ppt templet (from slidego)
+5. 자바프로젝트_3조 : 발표자료
